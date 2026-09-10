@@ -1,6 +1,6 @@
 namespace Lab01;
 
-public class Task1
+public static class Task1
 {
     public static void Run()
     {
