@@ -1,6 +1,6 @@
 namespace Lab01;
 
-public class Task3
+public static class Task3
 {
     public static void Run()
     {
@@ -10,14 +10,17 @@ public class Task3
         double age = 2026 - yearOfBirth;
         if(age < 18)
         {
+            Console.WriteLine($"Age: {age} y.");
             Console.WriteLine($"Your category is baby");
         }
         else if(age >= 18 && age < 60)
         {
+            Console.WriteLine($"Age: {age} y.");
             Console.WriteLine($"Your category is adult");
         }
         else
         {
+            Console.WriteLine($"Age: {age} y.");
             Console.WriteLine($"Your category is senior");
         }
     }
