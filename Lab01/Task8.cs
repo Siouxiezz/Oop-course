@@ -1,6 +1,6 @@
 namespace Lab01;
 
-public class Task8
+public static class Task8
 {
 
     public static double CalculateBMI(double weight, double height)
@@ -35,9 +35,8 @@ public class Task8
         return totalCost;
     }
     
-    public static string GetAgeCategory(int yearOfBirth)
+    public static string GetAgeCategory(int age)
     {
-        int age = 2026 - yearOfBirth;
         if(age < 18)
         {
             return "baby";
@@ -106,8 +105,9 @@ public class Task8
         double totalCost = CalculateCost(cost, quantity, discount);
         Console.WriteLine($"Sum: {totalCost:F2} hrn");
 
-        string age = GetAgeCategory(yearOfBirth);
-        Console.WriteLine($"Age: {(2026 - yearOfBirth)} y., category: {age}");
+        int age = 2026 - yearOfBirth;
+        string ageCategory = GetAgeCategory(age);
+        Console.WriteLine($"Age: {age} y., category: {ageCategory}");
 
         string pressureStatus = GetPressureStatus(systolicBP, diastolicBP);
         Console.WriteLine($"Pressure: {systolicBP}/{diastolicBP} - {pressureStatus}");
