@@ -1,6 +1,6 @@
 namespace Lab01;
 
-public class Task7
+public static class Task7
 {
     public static void Run()
     {
@@ -68,7 +68,7 @@ public class Task7
 
         Console.WriteLine($"======= Report on Admissions =======");
         Console.WriteLine($"Number of visits: {visits}");
-        Console.WriteLine($"Total: {sum}");
+        Console.WriteLine($"Total: {sum:F2} hrn");
         Console.WriteLine($"Average: {average:F2}");
         Console.WriteLine($"Min/max: {min}/{max}");
         Console.WriteLine($"Number of visits above average: {aboveAverageCount}/{visits}");
