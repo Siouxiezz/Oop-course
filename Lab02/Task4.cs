@@ -23,25 +23,25 @@ public static class Task4
             }
         }
 
-        int[] doctorSums = new int[n];
-        int[] daySums = new int[m];
+        int[] doctorSum = new int[n];
+        int[] daySum = new int[m];
 
         for (int i = 0; i < n; i++)
         {
             for (int j = 0; j < m; j++)
             {
-                doctorSums[i] += doctorMatrix[i, j];
-                daySums[j] += doctorMatrix[i, j];
+                doctorSum[i] += doctorMatrix[i, j];
+                daySum[j] += doctorMatrix[i, j];
             }
         }
 
         for (int i = 0; i < n; i++)
         {
-            Console.WriteLine($"Doctor {i + 1}: {doctorSums[i]} visits");
+            Console.WriteLine($"Doctor {i + 1}: {doctorSum[i]} visits");
         }
 
         Console.Write("By days: ");
-        Console.WriteLine(string.Join(", ", daySums));
+        Console.WriteLine(string.Join(", ", daySum));
 
         int maxValue = doctorMatrix[0, 0];
         int maxRow = 0;
