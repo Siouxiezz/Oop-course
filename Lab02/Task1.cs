@@ -35,9 +35,9 @@ public static class Task1
         double average = sum / n;
 
         int countAboveAverage = 0;
-        foreach(double weight in weightOfPatients)
+        for (int i = 0; i < n; i++)
         {
-            if(weight > average)
+            if(weightOfPatients[i] > average)
             {
                 countAboveAverage++;
             }
