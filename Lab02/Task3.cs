@@ -4,16 +4,7 @@ public static class Task3
 {
     public static void Run()
     {
-        string[] days =
-        {
-            "Monday",
-            "Tuesday",
-            "Wednesday",
-            "Thursday",
-            "Friday",
-            "Saturday",
-            "Sunday"
-        };
+        string[] days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"};
 
         int[] patientsCount = new int[7];
 
