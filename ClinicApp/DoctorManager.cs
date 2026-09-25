@@ -19,13 +19,13 @@ public class DoctorManager
 
         if (_count >= MaxDoctors)
         {
-            Console.WriteLine($"Не вдалося додати лікаря. Досягнуто ліміт ({MaxDoctors}).");
+            Console.WriteLine($"Can't add doctor. Limit reached ({MaxDoctors}).");
             return;
         }
 
         _doctors[_count] = doctor;
         _count++;
-        Console.WriteLine($"Лікаря [{doctor.Id}] {doctor.FullName} додано.");
+        Console.WriteLine($"Doctor [{doctor.Id}] {doctor.FullName} added.");
     }
 
     public Doctor? FindById(int id)
@@ -109,12 +109,12 @@ public class DoctorManager
     {
         if (_count == 0)
         {
-            Console.WriteLine($"=== Лікарі (0 / {MaxDoctors}) ===");
-            Console.WriteLine("Список лікарів порожній.");
+            Console.WriteLine($"=== Doctors (0 / {MaxDoctors}) ===");
+            Console.WriteLine("List of doctors is empty.");
             return;
         }
 
-        Console.WriteLine($"=== Лікарі ({_count} / {MaxDoctors}) ===");
+        Console.WriteLine($"=== Doctors ({_count} / {MaxDoctors}) ===");
         for (int i = 0; i < _count; i++)
         {
             Console.WriteLine(_doctors[i]);
@@ -125,13 +125,13 @@ public class DoctorManager
 
     public void DisplayStats()
     {
-        Console.WriteLine("=== Статистика лікарів ===");
+        Console.WriteLine("=== Doctor Statistics ===");
 
         if (_count == 0)
         {
-            Console.WriteLine("Всього:\t0");
-            Console.WriteLine("Доступні зараз:\t0");
-            Console.WriteLine("По спеціальностях:");
+            Console.WriteLine("Total:\t0");
+            Console.WriteLine("Available now:\t0");
+            Console.WriteLine("By Specialties:");
             Console.WriteLine("==========================");
             return;
         }
@@ -146,9 +146,9 @@ public class DoctorManager
             }
         }
 
-        Console.WriteLine($"Всього:\t{_count}");
-        Console.WriteLine($"Доступні зараз:\t{availableNow}");
-        Console.WriteLine("По спеціальностях:");
+        Console.WriteLine($"Total:\t{_count}");
+        Console.WriteLine($"Available now:\t{availableNow}");
+        Console.WriteLine("By Specialties:");
 
         for (int i = 0; i < _count; i++)
         {
