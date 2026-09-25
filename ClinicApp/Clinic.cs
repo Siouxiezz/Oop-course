@@ -4,7 +4,7 @@ namespace ClinicApp;
 
 public class Clinic
 {
-    public string Name { get; }
+    public string Name { get; set; }
 
     public PatientManager Patients { get; }
 
