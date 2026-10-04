@@ -167,5 +167,5 @@ if (patientFoundById != null)
     Console.WriteLine($"\nFound patient: {patientFoundById.FullName}");
 }
 
-string patientName = patientManager.FindById(99)?.FullName ?? "not found";
+string patientName = clinic.Patients.FindById(99)?.FullName ?? "Unknown patient";
 Console.WriteLine($"Patient with ID 99: {patientName}");
