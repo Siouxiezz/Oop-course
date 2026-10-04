@@ -22,15 +22,15 @@ public static class ClinicFormatter
     {
         return s switch
         {
-            Speciality.Cardiology => "Cardiology",
-            Speciality.Neurology => "Neurology",
-            Speciality.Orthopedics => "Orthopedics",
-            Speciality.Dermatology => "Dermatology",
-            Speciality.Emergency => "Emergency",
-            Speciality.General => "General Practice ",
-            Speciality.Pediatrics => "Pediatrics",
-            Speciality.Surgery => "Surgery",
-            _ => "Unknown Speciality"
+            Speciality.Cardiology => "Кардіологія",
+            Speciality.Neurology => "Неврологія",
+            Speciality.Orthopedics => "Ортопедія",
+            Speciality.Dermatology => "Дерматологія",
+            Speciality.Emergency => "Невідкладна допомога",
+            Speciality.General => "Загальна практика",
+            Speciality.Pediatrics => "Педіатрія",
+            Speciality.Surgery => "Хірургія",
+            _ => "Невідома спеціальність"
         };
     }
 
@@ -41,14 +41,14 @@ public static class ClinicFormatter
 
         if (mod100 >= 11 && mod100 <= 19)
         {
-            return $"{age} years";
+            return $"{age} років";
         }
 
         return mod10 switch
         {
-            1 => $"{age} year",
-            2 or 3 or 4 => $"{age} years",
-            _ => $"{age} years"
+            1 => $"{age} рік",
+            2 or 3 or 4 => $"{age} роки",
+            _ => $"{age} років"
         };
     }
 
