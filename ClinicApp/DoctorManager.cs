@@ -16,6 +16,8 @@ public class DoctorManager
         }
     }
 
+    public Doctor? this[int index] => index >= 0 && index < _count ? _doctors[index] : null;
+
     public void Add(Doctor doctor)
     {
         if (_count >= MaxDoctors)

@@ -10,6 +10,8 @@ public class PatientManager
 
     public int Count => _count;
 
+    public Patient? this[int index] => index >= 0 && index < _count ? _patients[index] : null;
+
     public void Add(Patient patient)
     {
         if (patient is null)

@@ -12,6 +12,8 @@ public class AppointmentManager
 
     public int Count => _count;
 
+    public Appointment? this[int index] => index >= 0 && index < _count ? _appointments[index] : null;
+
     public AppointmentManager(PatientManager patients, DoctorManager doctors)
     {
         _patients = patients ?? throw new ArgumentNullException(nameof(patients));
