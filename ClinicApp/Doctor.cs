@@ -11,14 +11,13 @@ public class Doctor
     public Speciality Speciality { get; set; }
     public string LicenseNumber { get; set; }
     public string Phone { get; set; }
-    public int WorkStartHour { get; set; } = 8;
-    public int WorkEndHour { get; set; } = 17;
+    public WorkSchedule Schedule { get; set; }
 
     public string FullName => $"{FirstName} {LastName}";
-    public int WorkingHoursPerDay => WorkEndHour - WorkStartHour;
+    public int WorkingHoursPerDay => Schedule.HoursPerDay;
 
-    public string WorkSchedule => $"{WorkStartHour:D2}:00–{WorkEndHour:D2}:00";
-    public bool IsAvailableNow => CanAcceptAt(DateTime.Now.Hour);
+    public string WorkSchedule => Schedule.Display;
+    public bool IsAvailableNow => Schedule.IsNow;
 
     public Doctor()
         : this("Unknown", "Doctor", Speciality.General)
@@ -31,6 +30,11 @@ public class Doctor
     }
 
     public Doctor(string firstName, string lastName, Speciality speciality, string licenseNumber, string phone)
+        : this(firstName, lastName, speciality, licenseNumber, phone, new WorkSchedule(8, 17))
+    {
+    }
+
+    public Doctor(string firstName, string lastName, Speciality speciality, string licenseNumber, string phone, WorkSchedule schedule)
     {
         Id = _nextId++;
         FirstName = firstName;
@@ -38,13 +42,12 @@ public class Doctor
         Speciality = speciality;
         LicenseNumber = licenseNumber;
         Phone = phone;
-        WorkStartHour = 8;
-        WorkEndHour = 17;
+        Schedule = schedule;
     }
 
     public bool CanAcceptAt(int hour)
     {
-        return hour >= WorkStartHour && hour < WorkEndHour;
+        return Schedule.Contains(hour);
     }
 
     public override string ToString()

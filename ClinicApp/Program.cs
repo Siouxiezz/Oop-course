@@ -13,21 +13,9 @@ Console.WriteLine(p3);
 Console.WriteLine(p4);
 Console.WriteLine(p5);
 
-Doctor d1 = new("Oleg", "Sidorenko", Speciality.Cardiology, "LIC-001", "0441234567")
-{
-    WorkStartHour = 8,
-    WorkEndHour = 16
-};
-Doctor d2 = new("Natalia", "Moroz", Speciality.Neurology, "LIC-002", "0442345678")
-{
-    WorkStartHour = 9,
-    WorkEndHour = 18
-};
-Doctor d3 = new("Andriy", "Vlasenko", Speciality.Pediatrics, "LIC-003", "0443456789")
-{
-    WorkStartHour = 8,
-    WorkEndHour = 17
-};
+Doctor d1 = new("Oleg", "Sidorenko", Speciality.Cardiology, "LIC-001", "0441234567", new WorkSchedule(8, 16));
+Doctor d2 = new("Natalia", "Moroz", Speciality.Neurology, "LIC-002", "0442345678", new WorkSchedule(9, 18));
+Doctor d3 = new("Andriy", "Vlasenko", Speciality.Pediatrics, "LIC-003", "0443456789", new WorkSchedule(8, 17));
 
 Console.WriteLine("\tDoctor List");
 Console.WriteLine(d1);
