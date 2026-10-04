@@ -10,6 +10,8 @@ public class PatientManager
 
     public int Count => _count;
 
+    public Patient? this[int index] => index >= 0 && index < _count ? _patients[index] : null;
+
     public void Add(Patient patient)
     {
         if (patient is null)
@@ -39,6 +41,19 @@ public class PatientManager
         }
 
         return null;
+    }
+
+    public bool TryFindById(int id, out Patient patient)
+    {
+        Patient? foundPatient = FindById(id);
+        if (foundPatient is null)
+        {
+            patient = null!;
+            return false;
+        }
+
+        patient = foundPatient;
+        return true;
     }
 
     public Patient[] FindByName(string query)
@@ -78,6 +93,31 @@ public class PatientManager
                 || fullName.Contains(normalizedQuery))
             {
                 results[index++] = patient;
+            }
+        }
+
+        return results;
+    }
+
+    public Patient[] FindByBloodType(BloodType bloodType)
+    {
+        int matches = 0;
+        for (int i = 0; i < _count; i++)
+        {
+            if (_patients[i].BloodType == bloodType)
+            {
+                matches++;
+            }
+        }
+
+        var results = new Patient[matches];
+        int index = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_patients[i].BloodType == bloodType)
+            {
+                results[index++] = _patients[i];
             }
         }
 

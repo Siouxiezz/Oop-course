@@ -8,15 +8,18 @@ public class DoctorManager
     private readonly Doctor[] _doctors = new Doctor[MaxDoctors];
     private int _count;
 
-    public int Count => _count;
+    public int Count
+    {
+        get
+        {
+            return _count;
+        }
+    }
+
+    public Doctor? this[int index] => index >= 0 && index < _count ? _doctors[index] : null;
 
     public void Add(Doctor doctor)
     {
-        if (doctor is null)
-        {
-            throw new ArgumentNullException(nameof(doctor));
-        }
-
         if (_count >= MaxDoctors)
         {
             Console.WriteLine($"Can't add doctor. Limit reached ({MaxDoctors}).");
@@ -41,6 +44,19 @@ public class DoctorManager
         return null;
     }
 
+    public bool TryFindById(int id, out Doctor doctor)
+    {
+        Doctor? foundDoctor = FindById(id);
+        if (foundDoctor is null)
+        {
+            doctor = null!;
+            return false;
+        }
+
+        doctor = foundDoctor;
+        return true;
+    }
+
     public Doctor[] FindBySpeciality(string speciality)
     {
         if (string.IsNullOrWhiteSpace(speciality))
@@ -48,29 +64,52 @@ public class DoctorManager
             return Array.Empty<Doctor>();
         }
 
-        string normalizedSpeciality = speciality.Trim();
-        int matches = 0;
+        string query = speciality.Trim();
 
+        int matches = 0;
         for (int i = 0; i < _count; i++)
         {
-            if (string.Equals(_doctors[i].Speciality, normalizedSpeciality, StringComparison.OrdinalIgnoreCase))
+            if (_doctors[i].Speciality.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
             {
                 matches++;
             }
         }
 
-        var results = new Doctor[matches];
+        Doctor[] result = new Doctor[matches];
         int index = 0;
-
         for (int i = 0; i < _count; i++)
         {
-            if (string.Equals(_doctors[i].Speciality, normalizedSpeciality, StringComparison.OrdinalIgnoreCase))
+            if (_doctors[i].Speciality.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
             {
-                results[index++] = _doctors[i];
+                result[index] = _doctors[i];
+                index++;
+            }
+        }
+        return result;
+    }
+
+    public Doctor[] FindBySpeciality(Speciality speciality)
+    {
+        int matches = 0;
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
+            {
+                matches++;
             }
         }
 
-        return results;
+        Doctor[] result = new Doctor[matches];
+        int index = 0;
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
+            {
+                result[index++] = _doctors[i];
+            }
+        }
+
+        return result;
     }
 
     public Doctor[] GetAll()
@@ -156,7 +195,7 @@ public class DoctorManager
 
             for (int j = 0; j < i; j++)
             {
-                if (string.Equals(_doctors[i].Speciality, _doctors[j].Speciality, StringComparison.OrdinalIgnoreCase))
+                if (_doctors[i].Speciality == _doctors[j].Speciality)
                 {
                     alreadySeen = true;
                     break;
@@ -168,12 +207,12 @@ public class DoctorManager
                 continue;
             }
 
-            string speciality = _doctors[i].Speciality;
+            Speciality speciality = _doctors[i].Speciality;
             int count = 0;
 
             for (int j = 0; j < _count; j++)
             {
-                if (string.Equals(_doctors[j].Speciality, speciality, StringComparison.OrdinalIgnoreCase))
+                if (_doctors[j].Speciality == speciality)
                 {
                     count++;
                 }

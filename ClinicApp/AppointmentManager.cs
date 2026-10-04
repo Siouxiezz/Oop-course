@@ -12,6 +12,8 @@ public class AppointmentManager
 
     public int Count => _count;
 
+    public Appointment? this[int index] => index >= 0 && index < _count ? _appointments[index] : null;
+
     public AppointmentManager(PatientManager patients, DoctorManager doctors)
     {
         _patients = patients ?? throw new ArgumentNullException(nameof(patients));
@@ -35,20 +37,20 @@ public class AppointmentManager
         var patient = _patients.FindById(patientId);
         if (patient == null)
         {
-            Console.WriteLine($"Помилка: пацієнта з ID {patientId} не знайдено.");
+            Console.WriteLine($"Error: patient with ID {patientId} was not found.");
             return false;
         }
 
         var doctor = _doctors.FindById(doctorId);
         if (doctor == null)
         {
-            Console.WriteLine($"Помилка: лікаря з ID {doctorId} не знайдено.");
+            Console.WriteLine($"Error: doctor with ID {doctorId} was not found.");
             return false;
         }
 
         if (_count >= MaxAppointments)
         {
-            Console.WriteLine($"Помилка: досягнуто ліміт записів ({MaxAppointments}).");
+            Console.WriteLine($"Error: appointment limit reached ({MaxAppointments}).");
             return false;
         }
 
@@ -56,7 +58,7 @@ public class AppointmentManager
         _appointments[_count] = appointment;
         _count++;
 
-        Console.WriteLine($"Запис [{appointment.Id}] створено: {patient.FullName} → {doctor.FullName} о {scheduledAt:dd.MM.yyyy HH:mm}");
+        Console.WriteLine($"Appointment [{appointment.Id}] created: {patient.FullName} → {doctor.FullName} at {scheduledAt:dd.MM.yyyy HH:mm}");
         return true;
     }
 
@@ -84,7 +86,7 @@ public class AppointmentManager
         bool result = appointment.Cancel(reason);
         if (result)
         {
-            Console.WriteLine($"Запис [{appointment.Id}] скасовано.");
+            Console.WriteLine($"Appointment [{appointment.Id}] cancelled.");
         }
 
         return result;
@@ -101,7 +103,7 @@ public class AppointmentManager
         bool result = appointment.Complete();
         if (result)
         {
-            Console.WriteLine($"Запис [{appointment.Id}] завершено.");
+            Console.WriteLine($"Appointment [{appointment.Id}] completed.");
         }
 
         return result;
@@ -123,6 +125,11 @@ public class AppointmentManager
         return FilterAppointments(appointment => appointment.ScheduledAt.Date == dateOnly);
     }
 
+    public Appointment[] GetByDate(int year, int month, int day)
+    {
+        return GetByDate(new DateTime(year, month, day));
+    }
+
     public Appointment[] GetUpcoming()
     {
         return FilterAppointments(appointment => appointment.IsUpcoming);
@@ -138,8 +145,8 @@ public class AppointmentManager
         var patient = _patients.FindById(appointment.PatientId);
         var doctor = _doctors.FindById(appointment.DoctorId);
 
-        string patientName = patient?.FullName ?? $"Пацієнт #{appointment.PatientId}";
-        string doctorName = doctor?.FullName ?? $"Лікар #{appointment.DoctorId}";
+        string patientName = patient?.FullName ?? $"Patient #{appointment.PatientId}";
+        string doctorName = doctor?.FullName ?? $"Doctor #{appointment.DoctorId}";
         string notePart = string.IsNullOrEmpty(appointment.Notes) ? string.Empty : $" | {appointment.Notes}";
 
         Console.WriteLine($"[{appointment.Id}] {patientName} → {doctorName} | {appointment.ScheduledAt:dd.MM.yyyy HH:mm}–{appointment.EndsAt:HH:mm} | {appointment.Status}{notePart}");
@@ -149,7 +156,7 @@ public class AppointmentManager
     {
         if (appointments == null || appointments.Length == 0)
         {
-            Console.WriteLine("Записів не знайдено.");
+            Console.WriteLine("No appointments found.");
             return;
         }
 

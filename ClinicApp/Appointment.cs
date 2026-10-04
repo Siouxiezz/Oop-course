@@ -5,25 +5,28 @@ namespace ClinicApp;
 public class Appointment
 {
     private static int _nextId = 1;
-
     public int Id { get; }
-
     public int PatientId { get; }
-
     public int DoctorId { get; }
-
     public DateTime ScheduledAt { get; set; }
-
     public int DurationMinutes { get; set; }
-
-    public string Status { get; private set; }
-
+    public AppointmentStatus Status { get; private set; }
     public string Notes { get; private set; }
+    public DateTime EndsAt
+    {
+        get
+        {
+            return ScheduledAt.AddMinutes(DurationMinutes);
+        }
+    }
 
-    public DateTime EndsAt => ScheduledAt.AddMinutes(DurationMinutes);
-
-    public bool IsUpcoming => ScheduledAt > DateTime.Now && Status == "Scheduled";
-
+    public bool IsUpcoming 
+    {
+        get 
+        { 
+            return ScheduledAt > DateTime.Now && Status == AppointmentStatus.Scheduled; 
+        }
+    }
     public Appointment(int patientId, int doctorId, DateTime scheduledAt, int durationMinutes = 30)
     {
         Id = _nextId++;
@@ -31,37 +34,44 @@ public class Appointment
         DoctorId = doctorId;
         ScheduledAt = scheduledAt;
         DurationMinutes = durationMinutes;
-        Status = "Scheduled";
-        Notes = string.Empty;
+        Status = AppointmentStatus.Scheduled;
+        Notes = "";
     }
 
     public bool Cancel(string reason = "")
     {
-        if (Status != "Scheduled")
+        if (Status != AppointmentStatus.Scheduled)
         {
-            Console.WriteLine("Can't cancel appointment. It's not scheduled.");
+            Console.WriteLine("Can't cancel appointment. It is not scheduled.");
             return false;
         }
 
-        Status = "Cancelled";
-        Notes = reason ?? string.Empty;
+        Status = AppointmentStatus.Cancelled;
+        Notes = reason;
         return true;
     }
 
     public bool Complete()
     {
-        if (Status != "Scheduled")
+        if (Status != AppointmentStatus.Scheduled)
         {
             return false;
         }
 
-        Status = "Completed";
+        Status = AppointmentStatus.Completed;
         return true;
     }
 
     public override string ToString()
     {
-        string notePart = string.IsNullOrEmpty(Notes) ? string.Empty : $" | {Notes}";
-        return $"[{Id}] Patient #{PatientId} → Doctor #{DoctorId} | {ScheduledAt:dd.MM.yyyy HH:mm}–{EndsAt:HH:mm} | {Status}{notePart}";
+        string result = $"[{Id}] Patient #{PatientId} → Doctor #{DoctorId} | " +
+                        $"{ScheduledAt:dd.MM.yyyy HH:mm}–{EndsAt:HH:mm} | {Status}";
+
+        if (Notes.Length > 0)
+        {
+            result += $" | {Notes}";
+        }
+
+        return result;
     }
 }
