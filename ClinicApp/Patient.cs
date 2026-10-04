@@ -3,7 +3,6 @@ namespace ClinicApp;
 public class Patient
 {
     private static int _nextId = 1;
-
     public int Id 
     { 
         get; 
@@ -23,7 +22,7 @@ public class Patient
         get; 
         set; 
     }
-    public string BloodType 
+    public BloodType BloodType 
     { 
         get; 
         set; 
@@ -39,8 +38,13 @@ public class Patient
         set; 
     }
 
-    public string FullName => $"{FirstName} {LastName}";
-
+    public string FullName
+    {
+        get
+        {
+            return $"{FirstName}, {LastName}";
+        }
+    }
     public int Age
     {
         get
@@ -55,19 +59,25 @@ public class Patient
         }
     }
 
-    public bool IsAdult => Age >= 18;
+    public bool IsAdult
+    {
+        get
+        {
+            return Age >= 18;   
+        }
+    }
 
     public Patient()
-        : this("Unknown", "Patient", new DateTime(2000, 1, 1), "Unknown", "0000000000")
+        : this("Unknown", "Patient", new DateTime(2000, 1, 1), BloodType.Unknown, "0000000000")
     {
     }
 
     public Patient(string firstName, string lastName)
-        : this(firstName, lastName, new DateTime(2000, 1, 1), "Unknown", "0000000000")
+        : this(firstName, lastName, new DateTime(2000, 1, 1), BloodType.Unknown, "0000000000")
     {
     }
 
-    public Patient(string firstName, string lastName, DateTime dob, string bloodType, string phone)
+    public Patient(string firstName, string lastName, DateTime dob, BloodType bloodType, string phone)
     {
         Id = _nextId++;
         FirstName = firstName;

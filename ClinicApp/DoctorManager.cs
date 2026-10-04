@@ -8,15 +8,16 @@ public class DoctorManager
     private readonly Doctor[] _doctors = new Doctor[MaxDoctors];
     private int _count;
 
-    public int Count => _count;
+    public int Count
+    {
+        get
+        {
+            return _count;
+        }
+    }
 
     public void Add(Doctor doctor)
     {
-        if (doctor is null)
-        {
-            throw new ArgumentNullException(nameof(doctor));
-        }
-
         if (_count >= MaxDoctors)
         {
             Console.WriteLine($"Can't add doctor. Limit reached ({MaxDoctors}).");
@@ -43,34 +44,28 @@ public class DoctorManager
 
     public Doctor[] FindBySpeciality(string speciality)
     {
-        if (string.IsNullOrWhiteSpace(speciality))
-        {
-            return Array.Empty<Doctor>();
-        }
+        string lower = speciality?.ToLower() ?? string.Empty;
 
-        string normalizedSpeciality = speciality.Trim();
         int matches = 0;
-
         for (int i = 0; i < _count; i++)
         {
-            if (string.Equals(_doctors[i].Speciality, normalizedSpeciality, StringComparison.OrdinalIgnoreCase))
+            if (_doctors[i].Speciality.ToString().ToLower() == lower)
             {
                 matches++;
             }
         }
 
-        var results = new Doctor[matches];
+        Doctor[] result = new Doctor[matches];
         int index = 0;
-
         for (int i = 0; i < _count; i++)
         {
-            if (string.Equals(_doctors[i].Speciality, normalizedSpeciality, StringComparison.OrdinalIgnoreCase))
+            if (_doctors[i].Speciality.ToString().ToLower() == lower)
             {
-                results[index++] = _doctors[i];
+                result[index] = _doctors[i];
+                index++;
             }
         }
-
-        return results;
+        return result;
     }
 
     public Doctor[] GetAll()
@@ -156,7 +151,7 @@ public class DoctorManager
 
             for (int j = 0; j < i; j++)
             {
-                if (string.Equals(_doctors[i].Speciality, _doctors[j].Speciality, StringComparison.OrdinalIgnoreCase))
+                if (_doctors[i].Speciality == _doctors[j].Speciality)
                 {
                     alreadySeen = true;
                     break;
@@ -168,12 +163,12 @@ public class DoctorManager
                 continue;
             }
 
-            string speciality = _doctors[i].Speciality;
+            Speciality speciality = _doctors[i].Speciality;
             int count = 0;
 
             for (int j = 0; j < _count; j++)
             {
-                if (string.Equals(_doctors[j].Speciality, speciality, StringComparison.OrdinalIgnoreCase))
+                if (_doctors[j].Speciality == speciality)
                 {
                     count++;
                 }

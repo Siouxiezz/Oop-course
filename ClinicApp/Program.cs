@@ -1,396 +1,143 @@
-﻿using System;
 using ClinicApp;
 
-static void ShowAppointmentsMenu(Clinic clinic)
+Patient p1 = new("Ivan", "Petrenko", new DateTime(1985, 8, 9), BloodType.APositive, "0501234567");
+Patient p2 = new("Olena", "Koval", new DateTime(1993, 9, 10), BloodType.BNegative, "0672345678");
+Patient p3 = new("Maxim", "Boyko", new DateTime(2010, 8, 9), BloodType.ONegative, "0933456789");
+Patient p4 = new("Olena", "Koval", new DateTime(2010, 9, 10), BloodType.Unknown, "0000000000");
+Patient p5 = new("Maria", "Tkach", new DateTime(2000, 7, 17), BloodType.Unknown, "0000000000");
+
+Console.WriteLine("\tPatient List\n");
+Console.WriteLine(p1);
+Console.WriteLine(p2);
+Console.WriteLine(p3);
+Console.WriteLine(p4);
+Console.WriteLine(p5);
+
+Doctor d1 = new("Oleg", "Sidorenko", Speciality.Cardiology, "LIC-001", "0441234567")
 {
-    while (true)
-    {
-        Console.WriteLine("=== Appointments ===");
-        Console.WriteLine("1. Show all");
-        Console.WriteLine("2. Book");
-        Console.WriteLine("3. Cancel");
-        Console.WriteLine("4. Complete");
-        Console.WriteLine("5. Patient appointments");
-        Console.WriteLine("6. Doctor appointments");
-        Console.WriteLine("7. Appointments for date");
-        Console.WriteLine("8. Upcoming");
-        Console.WriteLine("0. Back");
-        Console.Write("Choose an option: ");
+    WorkStartHour = 8,
+    WorkEndHour = 16
+};
+Doctor d2 = new("Natalia", "Moroz", Speciality.Neurology, "LIC-002", "0442345678")
+{
+    WorkStartHour = 9,
+    WorkEndHour = 18
+};
+Doctor d3 = new("Andriy", "Vlasenko", Speciality.Pediatrics, "LIC-003", "0443456789")
+{
+    WorkStartHour = 8,
+    WorkEndHour = 17
+};
 
-        if (!int.TryParse(Console.ReadLine(), out int choice))
-        {
-            Console.WriteLine("Invalid choice. Please try again.");
-            Console.WriteLine();
-            continue;
-        }
+Console.WriteLine("\tDoctor List");
+Console.WriteLine(d1);
+Console.WriteLine(d2);
+Console.WriteLine(d3);
 
-        switch (choice)
-        {
-            case 1:
-                Console.WriteLine("=== All Appointments ===");
-                clinic.Appointments.DisplayList(clinic.Appointments.GetAll());
-                break;
+PatientManager patientManager = new();
+patientManager.Add(p1);
+patientManager.Add(p2);
+patientManager.Add(p3);
+patientManager.Add(p4);
+patientManager.Add(p5);
 
-            case 2:
-                Console.WriteLine("Available patients:");
-                clinic.Patients.DisplayAll();
-                Console.WriteLine("Available doctors:");
-                clinic.Doctors.DisplayAll();
+Console.WriteLine("\nAll Patients:");
+patientManager.DisplayAll();
 
-                Console.Write("Patient ID: ");
-                int patientId = int.TryParse(Console.ReadLine(), out int parsedPatientId) ? parsedPatientId : 0;
-                Console.Write("Doctor ID: ");
-                int doctorId = int.TryParse(Console.ReadLine(), out int parsedDoctorId) ? parsedDoctorId : 0;
-                Console.Write("Date and Time (yyyy-MM-dd HH:mm): ");
-                string scheduleText = Console.ReadLine() ?? string.Empty;
-                DateTime scheduledAt = DateTime.TryParse(scheduleText, out DateTime parsedScheduledAt)
-                    ? parsedScheduledAt
-                    : DateTime.Now.AddDays(1);
-                Console.Write("Duration (min): ");
-                int durationMinutes = int.TryParse(Console.ReadLine(), out int parsedDuration) ? parsedDuration : 30;
+Console.WriteLine("\nPatient Statistics:");
+patientManager.DisplayStats();
 
-                clinic.Appointments.Book(patientId, doctorId, scheduledAt, durationMinutes);
-                break;
+DoctorManager doctorManager = new();
+Console.WriteLine("\nAdding Doctors:");
+doctorManager.Add(d1);
+doctorManager.Add(d2);
+doctorManager.Add(d3);
 
-            case 3:
-                Console.Write("Enter appointment ID to cancel: ");
-                if (int.TryParse(Console.ReadLine(), out int cancelId) && clinic.Appointments.Cancel(cancelId, "Patient couldn't make it"))
-                {
-                    Console.WriteLine($"Appointment [{cancelId}] cancelled.");
-                }
-                else
-                {
-                    Console.WriteLine("Appointment not found or cannot be cancelled.");
-                }
-                break;
+Console.WriteLine("\nDoctor List:");
+doctorManager.DisplayAll();
 
-            case 4:
-                Console.Write("Enter appointment ID to complete: ");
-                if (int.TryParse(Console.ReadLine(), out int completeId) && clinic.Appointments.Complete(completeId))
-                {
-                    Console.WriteLine($"Appointment [{completeId}] completed.");
-                }
-                else
-                {
-                    Console.WriteLine("Appointment not found or cannot be completed.");
-                }
-                break;
+Console.WriteLine("\nDoctor Statistics:");
+doctorManager.DisplayStats();
 
-            case 5:
-                Console.Write("Enter patient ID: ");
-                if (int.TryParse(Console.ReadLine(), out int patientFilterId))
-                {
-                    var patientAppointments = clinic.Appointments.GetByPatient(patientFilterId);
-                    Console.WriteLine($"Appointments for patient #{patientFilterId}:");
-                    clinic.Appointments.DisplayList(patientAppointments);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid patient ID.");
-                }
-                break;
-
-            case 6:
-                Console.Write("Enter doctor ID: ");
-                if (int.TryParse(Console.ReadLine(), out int doctorFilterId))
-                {
-                    var doctorAppointments = clinic.Appointments.GetByDoctor(doctorFilterId);
-                    Console.WriteLine($"Appointments for doctor #{doctorFilterId}:");
-                    clinic.Appointments.DisplayList(doctorAppointments);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid doctor ID.");
-                }
-                break;
-
-            case 7:
-                Console.Write("Enter date (yyyy-MM-dd): ");
-                string dateText = Console.ReadLine() ?? string.Empty;
-                if (DateTime.TryParse(dateText, out DateTime dateFilter))
-                {
-                    var dateAppointments = clinic.Appointments.GetByDate(dateFilter);
-                    Console.WriteLine($"Appointments for date {dateFilter:dd.MM.yyyy}:");
-                    clinic.Appointments.DisplayList(dateAppointments);
-                }
-                else
-                {
-                    Console.WriteLine("Invalid date.");
-                }
-                break;
-
-            case 8:
-                var upcomingAppointments = clinic.Appointments.GetUpcoming();
-                Console.WriteLine("Upcoming appointments:");
-                clinic.Appointments.DisplayList(upcomingAppointments);
-                break;
-
-            case 0:
-                return;
-
-            default:
-                Console.WriteLine("Invalid option.");
-                break;
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Press Enter to continue...");
-        Console.ReadLine();
-        Console.Clear();
-    }
+string specialitySearch = "Cardiology";
+Console.WriteLine($"\nSearching for doctors by specialty \"{specialitySearch}\":");
+Doctor[] cardiologistsSearch = doctorManager.FindBySpeciality(specialitySearch);
+foreach (Doctor doctor in cardiologistsSearch)
+{
+    Console.WriteLine($"Found: [{doctor.Id}] {doctor.FullName} ({doctor.Speciality})");
 }
 
-static void ShowDoctorsDemo(Clinic clinic)
+Console.WriteLine($"\nSearching for doctor with ID {d1.Id}:");
+Doctor? foundDoctor = doctorManager.FindById(d1.Id);
+if (foundDoctor != null)
 {
-    Console.WriteLine("=== Doctors ===");
-    foreach (var doctor in clinic.Doctors.GetAll())
-    {
-        Console.WriteLine(doctor);
-    }
-
-    Console.WriteLine();
+    Console.WriteLine($"Found: {foundDoctor.FullName}, License: {foundDoctor.LicenseNumber}");
 }
 
-static void ShowDoctorsMenu(Clinic clinic)
-{
-    while (true)
-    {
-        Console.WriteLine("=== Doctors ===");
-        Console.WriteLine("1. Show all");
-        Console.WriteLine("2. Add");
-        Console.WriteLine("3. Find by specialty");
-        Console.WriteLine("4. Delete");
-        Console.WriteLine("5. Statistics");
-        Console.WriteLine("0. Back");
-        Console.Write("Choose an option: ");
+Console.WriteLine($"\nRemoving doctor with ID {d2.Id}:");
+bool isDoctorRemoved = doctorManager.Remove(d2.Id);
+Console.WriteLine(isDoctorRemoved ? "Doctor successfully removed." : "Doctor not found.");
 
-        if (!int.TryParse(Console.ReadLine(), out int choice))
-        {
-            Console.WriteLine("Invalid choice. Please try again.");
-            Console.WriteLine();
-            continue;
-        }
+Console.WriteLine("\nUpdated Doctor List:");
+doctorManager.DisplayAll();
 
-        switch (choice)
-        {
-            case 1:
-                clinic.Doctors.DisplayAll();
-                break;
+Appointment a1 = new(p1.Id, d1.Id, DateTime.Now.AddDays(1).AddHours(2), 30);
+Appointment a2 = new(p2.Id, d2.Id, DateTime.Now.AddDays(2).AddHours(1), 45);
+Appointment a3 = new(p1.Id, d2.Id, DateTime.Now.AddHours(-5), 20);
 
-            case 2:
-                Console.Write("First Name: ");
-                string firstName = Console.ReadLine() ?? string.Empty;
-                Console.Write("Last Name: ");
-                string lastName = Console.ReadLine() ?? string.Empty;
-                Console.Write("Specialty: ");
-                string speciality = Console.ReadLine() ?? "General Medicine";
-                Console.Write("License Number: ");
-                string licenseNumber = Console.ReadLine() ?? "LIC-000";
-                Console.Write("Phone: ");
-                string phone = Console.ReadLine() ?? "0000000000";
-                Console.Write("Work Start Time (hour): ");
-                int startHour = int.TryParse(Console.ReadLine(), out int parsedStartHour) ? parsedStartHour : 8;
-                Console.Write("Work End Time (hour): ");
-                int endHour = int.TryParse(Console.ReadLine(), out int parsedEndHour) ? parsedEndHour : 17;
+Console.WriteLine("\nInitial Appointments:");
+Console.WriteLine(a1);
+Console.WriteLine(a2);
+Console.WriteLine(a3);
 
-                var newDoctor = new Doctor(firstName, lastName, speciality, licenseNumber, phone)
-                {
-                    WorkStartHour = startHour,
-                    WorkEndHour = endHour
-                };
-                clinic.Doctors.Add(newDoctor);
-                break;
+Console.WriteLine("\nChanging Appointment Statuses:");
+a3.Complete();
+Console.WriteLine($"Appointment #{a3.Id} completed: {a3}");
 
-            case 3:
-                Console.Write("Enter specialty: ");
-                string searchSpeciality = Console.ReadLine() ?? string.Empty;
-                var specialityMatches = clinic.Doctors.FindBySpeciality(searchSpeciality);
-                if (specialityMatches.Length == 0)
-                {
-                    Console.WriteLine("No doctors found with that specialty.");
-                }
-                else
-                {
-                    foreach (var doctor in specialityMatches)
-                    {
-                        Console.WriteLine(doctor);
-                    }
-                }
-                break;
+a2.Cancel("Patient is ill");
+Console.WriteLine($"Appointment #{a2.Id} cancelled: {a2}");
 
-            case 4:
-                Console.Write("Enter doctor ID to delete: ");
-                if (int.TryParse(Console.ReadLine(), out int idToDelete) && clinic.Doctors.Remove(idToDelete))
-                {
-                    Console.WriteLine($"Doctor with ID {idToDelete} deleted.");
-                }
-                else
-                {
-                    Console.WriteLine("Doctor with that ID not found.");
-                }
-                break;
+AppointmentManager appointmentManager = new(patientManager, doctorManager);
+appointmentManager.Book(p1.Id, d1.Id, DateTime.Now.AddDays(1).Date.AddHours(10), 30);
+appointmentManager.Book(p2.Id, d3.Id, DateTime.Now.AddDays(1).Date.AddHours(11), 45);
+appointmentManager.Book(p3.Id, d1.Id, DateTime.Now.AddDays(2).Date.AddHours(9), 20);
 
-            case 5:
-                clinic.Doctors.DisplayStats();
-                break;
+Console.WriteLine("\nUpcoming Appointments:");
+appointmentManager.DisplayList(appointmentManager.GetUpcoming());
 
-            case 0:
-                return;
+int appointmentToCancelId = appointmentManager.GetAll()[0].Id;
+Console.WriteLine($"\nCancelling appointment #{appointmentToCancelId}:");
+appointmentManager.Cancel(appointmentToCancelId, "Patient could not make it");
 
-            default:
-                Console.WriteLine("Invalid option.");
-                break;
-        }
+Console.WriteLine($"\nAppointments for patient #{p2.Id}:");
+appointmentManager.DisplayList(appointmentManager.GetByPatient(p2.Id));
 
-        Console.WriteLine();
-        Console.WriteLine("Press Enter to continue...");
-        Console.ReadLine();
-        Console.Clear();
-    }
-}
+Clinic clinic = new("Medical Clinic");
+clinic.Patients.Add(p1);
+clinic.Patients.Add(p2);
+clinic.Doctors.Add(d1);
+clinic.Doctors.Add(d2);
+clinic.Appointments.Book(p1.Id, d1.Id, DateTime.Now.AddDays(1).Date.AddHours(10), 30);
+clinic.Appointments.Book(p2.Id, d2.Id, DateTime.Now.AddDays(2).Date.AddHours(11), 45);
 
-static void ShowPatientsMenu(Clinic clinic)
-{
-    while (true)
-    {
-        Console.WriteLine("=== Patients ===");
-        Console.WriteLine("1. Show all");
-        Console.WriteLine("2. Add");
-        Console.WriteLine("3. Find by name");
-        Console.WriteLine("4. Delete");
-        Console.WriteLine("5. Statistics");
-        Console.WriteLine("0. Back");
-        Console.Write("Choose an option: ");
+Console.WriteLine();
+clinic.DisplaySchedule(DateTime.Now.AddDays(1));
 
-        if (!int.TryParse(Console.ReadLine(), out int choice))
-        {
-            Console.WriteLine("Invalid choice. Please try again.");
-            Console.WriteLine();
-            continue;
-        }
-
-        switch (choice)
-        {
-            case 1:
-                clinic.Patients.DisplayAll();
-                break;
-
-            case 2:
-                Console.Write("First Name: ");
-                string firstName = Console.ReadLine() ?? string.Empty;
-                Console.Write("Last Name: ");
-                string lastName = Console.ReadLine() ?? string.Empty;
-                Console.Write("Birth Year: ");
-                int year = int.TryParse(Console.ReadLine(), out int parsedYear) ? parsedYear : DateTime.Today.Year;
-                Console.Write("Birth Month: ");
-                int month = int.TryParse(Console.ReadLine(), out int parsedMonth) ? parsedMonth : 1;
-                Console.Write("Birth Day: ");
-                int day = int.TryParse(Console.ReadLine(), out int parsedDay) ? parsedDay : 1;
-                Console.Write("Blood Type: ");
-                string bloodType = Console.ReadLine() ?? "Unknown";
-                Console.Write("Phone: ");
-                string phone = Console.ReadLine() ?? "0000000000";
-
-                var newPatient = new Patient(firstName, lastName, new DateTime(year, month, day), bloodType, phone);
-                clinic.Patients.Add(newPatient);
-                break;
-
-            case 3:
-                Console.Write("Enter part of the name or surname: ");
-                string search = Console.ReadLine() ?? string.Empty;
-                var matches = clinic.Patients.FindByName(search);
-                if (matches.Length == 0)
-                {
-                    Console.WriteLine("No results found.");
-                }
-                else
-                {
-                    foreach (var patient in matches)
-                    {
-                        Console.WriteLine(patient);
-                    }
-                }
-                break;
-
-            case 4:
-                Console.Write("Enter the ID of the patient to delete: ");
-                if (int.TryParse(Console.ReadLine(), out int idToDelete) && clinic.Patients.Remove(idToDelete))
-                {
-                    Console.WriteLine($"Patient with ID {idToDelete} has been deleted.");
-                }
-                else
-                {
-                    Console.WriteLine("Patient with that ID not found.");
-                }
-                break;
-
-            case 5:
-                clinic.Patients.DisplayStats();
-                break;
-
-            case 0:
-                return;
-
-            default:
-                Console.WriteLine("Invalid option.");
-                break;
-        }
-
-        Console.WriteLine();
-        Console.WriteLine("Press Enter to continue...");
-        Console.ReadLine();
-        Console.Clear();
-    }
-}
-
-static void SeedClinic(Clinic clinic)
-{
-    var patients = new[]
-    {
-        new Patient("Ivan", "Petrenko", new DateTime(1985, 4, 12), "A+", "0501234567"),
-        new Patient("Olena", "Koval", new DateTime(1993, 2, 8), "B-", "0672345678"),
-        new Patient("Maxim", "Boyko", new DateTime(2010, 5, 15), "O+", "0933456789")
-    };
-
-    var doctors = new[]
-    {
-        new Doctor("Oleg", "Sidorenko", "Cardiology", "LIC-001", "0441234567")
-        {
-            WorkStartHour = 8,
-            WorkEndHour = 16
-        },
-        new Doctor("Natalia", "Moroz", "Neurology", "LIC-002", "0442345678")
-        {
-            WorkStartHour = 9,
-            WorkEndHour = 18
-        },
-        new Doctor("Andriy", "Vlasenko", "Pediatrics", "LIC-003", "0443456789")
-        {
-            WorkStartHour = 8,
-            WorkEndHour = 17
-        }
-    };
-
-    foreach (var patient in patients)
-    {
-        clinic.Patients.Add(patient);
-    }
-
-    foreach (var doctor in doctors)
-    {
-        clinic.Doctors.Add(doctor);
-    }
-
-    clinic.Appointments.Book(patients[0].Id, doctors[0].Id, new DateTime(2026, 5, 9, 10, 0, 0));
-    clinic.Appointments.Book(patients[1].Id, doctors[1].Id, new DateTime(2026, 5, 9, 11, 0, 0), 45);
-    clinic.Appointments.Book(patients[2].Id, doctors[2].Id, new DateTime(2026, 5, 10, 9, 0, 0), 20);
-}
-
-var clinic = new Clinic("Медична Клініка");
-SeedClinic(clinic);
-clinic.DisplaySchedule(new DateTime(2026, 5, 9));
+Console.WriteLine();
 clinic.GenerateReport();
-ShowDoctorsDemo(clinic);
-ShowDoctorsMenu(clinic);
-ShowPatientsMenu(clinic);
-ShowAppointmentsMenu(clinic);
+
+Patient[] patientsNamedOlena = patientManager.FindByName("Olena");
+Console.WriteLine("\nPatients matching \"Olena\":");
+foreach (Patient patient in patientsNamedOlena)
+{
+    Console.WriteLine(patient);
+}
+
+Patient? patientFoundById = patientManager.FindById(p3.Id);
+if (patientFoundById != null)
+{
+    Console.WriteLine($"\nFound patient: {patientFoundById.FullName}");
+}
+
+string patientName = patientManager.FindById(99)?.FullName ?? "not found";
+Console.WriteLine($"Patient with ID 99: {patientName}");
