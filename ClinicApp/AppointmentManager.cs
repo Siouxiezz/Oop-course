@@ -125,6 +125,11 @@ public class AppointmentManager
         return FilterAppointments(appointment => appointment.ScheduledAt.Date == dateOnly);
     }
 
+    public Appointment[] GetByDate(int year, int month, int day)
+    {
+        return GetByDate(new DateTime(year, month, day));
+    }
+
     public Appointment[] GetUpcoming()
     {
         return FilterAppointments(appointment => appointment.IsUpcoming);

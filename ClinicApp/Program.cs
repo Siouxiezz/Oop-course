@@ -111,6 +111,46 @@ clinic.Appointments.Book(p2.Id, d2.Id, DateTime.Now.AddDays(2).Date.AddHours(11)
 Console.WriteLine();
 clinic.DisplaySchedule(DateTime.Now.AddDays(1));
 
+Console.WriteLine("\nDoctors by exact speciality:");
+foreach (Doctor doctor in clinic.Doctors.FindBySpeciality(Speciality.Cardiology))
+{
+    Console.WriteLine($"Found: {doctor.FullName} ({doctor.Speciality})");
+}
+
+Console.WriteLine("\nDoctors matching \"Neuro\":");
+foreach (Doctor doctor in clinic.Doctors.FindBySpeciality("Neuro"))
+{
+    Console.WriteLine($"Found: {doctor.FullName} ({doctor.Speciality})");
+}
+
+Console.WriteLine("\nAppointments for tomorrow:");
+DateTime tomorrow = DateTime.Today.AddDays(1);
+clinic.Appointments.DisplayList(clinic.Appointments.GetByDate(tomorrow.Year, tomorrow.Month, tomorrow.Day));
+
+if (clinic.Patients.TryFindById(p1.Id, out Patient foundPatient))
+{
+    Console.WriteLine($"Found patient: {foundPatient.FullName}");
+}
+else
+{
+    Console.WriteLine("Patient not found.");
+}
+
+if (clinic.Doctors.TryFindById(d1.Id, out Doctor foundDoctorByTry))
+{
+    Console.WriteLine($"Found doctor: {foundDoctorByTry.FullName}");
+}
+else
+{
+    Console.WriteLine("Doctor not found.");
+}
+
+Console.WriteLine("\nPatients with unknown blood type:");
+foreach (Patient patient in patientManager.FindByBloodType(BloodType.Unknown))
+{
+    Console.WriteLine(patient);
+}
+
 Console.WriteLine();
 clinic.GenerateReport();
 

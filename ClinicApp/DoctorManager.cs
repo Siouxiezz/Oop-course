@@ -44,14 +44,32 @@ public class DoctorManager
         return null;
     }
 
+    public bool TryFindById(int id, out Doctor doctor)
+    {
+        Doctor? foundDoctor = FindById(id);
+        if (foundDoctor is null)
+        {
+            doctor = null!;
+            return false;
+        }
+
+        doctor = foundDoctor;
+        return true;
+    }
+
     public Doctor[] FindBySpeciality(string speciality)
     {
-        string lower = speciality?.ToLower() ?? string.Empty;
+        if (string.IsNullOrWhiteSpace(speciality))
+        {
+            return Array.Empty<Doctor>();
+        }
+
+        string query = speciality.Trim();
 
         int matches = 0;
         for (int i = 0; i < _count; i++)
         {
-            if (_doctors[i].Speciality.ToString().ToLower() == lower)
+            if (_doctors[i].Speciality.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
             {
                 matches++;
             }
@@ -61,12 +79,36 @@ public class DoctorManager
         int index = 0;
         for (int i = 0; i < _count; i++)
         {
-            if (_doctors[i].Speciality.ToString().ToLower() == lower)
+            if (_doctors[i].Speciality.ToString().Contains(query, StringComparison.OrdinalIgnoreCase))
             {
                 result[index] = _doctors[i];
                 index++;
             }
         }
+        return result;
+    }
+
+    public Doctor[] FindBySpeciality(Speciality speciality)
+    {
+        int matches = 0;
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
+            {
+                matches++;
+            }
+        }
+
+        Doctor[] result = new Doctor[matches];
+        int index = 0;
+        for (int i = 0; i < _count; i++)
+        {
+            if (_doctors[i].Speciality == speciality)
+            {
+                result[index++] = _doctors[i];
+            }
+        }
+
         return result;
     }
 
