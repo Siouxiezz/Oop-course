@@ -1,26 +1,46 @@
 using System;
-namespace ClinicApp;
+using ClinicApp.Enums;
+using ClinicApp.Utils;
+
+namespace ClinicApp.Models;
 public class Patient
 {
+    private string _phone = "";
+    private DateTime _dateOfBirth;
+    private string _lastName = "";
+     private string _firstName = "";
     private static int _nextId = 1;
+    private string _email = "";
     public int Id 
     { 
         get; 
     }
     public string FirstName 
     { 
-        get; 
-        set; 
+        get => _firstName;
+        set
+        {
+            ClinicValidator.ValidateName(value, nameof(FirstName));
+            _firstName = value;
+        }
     }
     public string LastName 
     { 
-        get; 
-        set; 
+        get => _lastName;
+        set
+        {
+            ClinicValidator.ValidateName(value, nameof(LastName));
+            _lastName = value;
+        }
     }
     public DateTime DateOfBirth 
     { 
-        get; 
-        set; 
+        get => _dateOfBirth; 
+        set
+        {
+            ClinicValidator.ValidateDate(value, nameof(DateOfBirth));
+            _dateOfBirth = value;
+        }
     }
     public BloodType BloodType 
     { 
@@ -29,13 +49,26 @@ public class Patient
     }
     public string Phone 
     { 
-        get; 
-        set; 
+        get => _phone; 
+        set
+        {
+            ClinicValidator.ValidatePhone(value);
+            _phone = value;
+        }
     }
     public string Email 
     { 
-        get; 
-        set; 
+        get => _email;
+        set
+        {
+            if (value == null)
+                throw new ArgumentException("Email не може бути null.", nameof(Email));
+
+            if (value != string.Empty)
+                ClinicValidator.ValidateEmail(value);
+
+            _email = value;
+        } 
     }
 
     public string FullName
@@ -79,13 +112,13 @@ public class Patient
 
     public Patient(string firstName, string lastName, DateTime dob, BloodType bloodType, string phone)
     {
-        Id = _nextId++;
         FirstName = firstName;
         LastName = lastName;
         DateOfBirth = dob;
         BloodType = bloodType;
         Phone = phone;
         Email = string.Empty;
+        Id = _nextId++;
     }
 
     public string GetAgeCategory()
