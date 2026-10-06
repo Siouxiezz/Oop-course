@@ -10,6 +10,7 @@ public class Patient
     private string _lastName = "";
      private string _firstName = "";
     private static int _nextId = 1;
+    private string _email = "";
     public int Id 
     { 
         get; 
@@ -57,8 +58,17 @@ public class Patient
     }
     public string Email 
     { 
-        get; 
-        set; 
+        get => _email;
+        set
+        {
+            if (value == null)
+                throw new ArgumentException("Email не може бути null.", nameof(Email));
+
+            if (value != string.Empty)
+                ClinicValidator.ValidateEmail(value);
+
+            _email = value;
+        } 
     }
 
     public string FullName

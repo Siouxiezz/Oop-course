@@ -56,19 +56,28 @@ public static class ClinicFormatter
 
     public static string FormatPhone(string phone)
     {
+        string originalPhone = phone;
+        string countryCode = "";
+
+        if (phone.Length == 13 && phone.Substring(0, 3) == "+38")
+        {
+            countryCode = "+38 ";
+            phone = phone.Substring(3);
+        }
+
         if (phone.Length != 10)
         {
-            return phone;
+            return originalPhone;
         }
 
         for (int i = 0; i < phone.Length; i++)
         {
             if (!char.IsDigit(phone[i]))
             {
-                return phone;
+                return originalPhone;
             }
         }
 
-        return $"({phone.Substring(0, 3)}) {phone.Substring(3, 3)}-{phone.Substring(6, 4)}";
+        return $"{countryCode}({phone.Substring(0, 3)}) {phone.Substring(3, 3)}-{phone.Substring(6, 4)}";
     }
 }

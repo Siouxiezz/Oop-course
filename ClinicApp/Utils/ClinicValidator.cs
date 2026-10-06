@@ -1,9 +1,19 @@
 using System;
+using System.Text.RegularExpressions;
 
 namespace ClinicApp.Utils;
 
 public static class ClinicValidator
 {
+
+    private static readonly Regex PhoneRegex =
+    new(@"^[0-9]{10}\z");
+
+    private static readonly Regex InternationalPhoneRegex =
+        new(@"^\+38[0-9]{10}\z");
+
+    private static readonly Regex EmailRegex =
+        new(@"^[^@\s]+@[^@\s]+\.[^@\s]+\z");
     public static void ValidateName(string value, string fieldName)
     {
         if (string.IsNullOrWhiteSpace(value))
@@ -15,16 +25,22 @@ public static class ClinicValidator
 
     public static void ValidatePhone(string phone)
     {
-        if (string.IsNullOrEmpty(phone) || phone.Length != 10)
-                throw new ArgumentException("Телефон має містити рівно 10 цифр.", nameof(phone));
-
-            for (int i = 0; i < phone.Length; i++)
-            {
-                if (!char.IsDigit(phone[i]))
-                    throw new ArgumentException("Телефон має містити лише цифри.", nameof(phone));
-            }
+        if (string.IsNullOrEmpty(phone) ||
+        (!PhoneRegex.IsMatch(phone) && !InternationalPhoneRegex.IsMatch(phone)))
+        {
+            throw new ArgumentException(
+                "Телефон має містити 10 цифр або починатися з +38 і містити 10 цифр.",
+                nameof(phone));
+        }
     }
 
+    public static void ValidateEmail(string email)
+    {
+        if (string.IsNullOrEmpty(email) || !EmailRegex.IsMatch(email))
+        {
+            throw new ArgumentException("Некоректний email.", nameof(email));
+        }
+    }
     public static void ValidateDate(DateTime value, string fieldName)
     {
         if (value > DateTime.Today)
