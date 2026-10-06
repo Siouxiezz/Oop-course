@@ -5,6 +5,10 @@ using ClinicApp.Utils;
 namespace ClinicApp.Models;
 public class Patient
 {
+    private string _phone = "";
+    private DateTime _dateOfBirth;
+    private string _lastName = "";
+     private string _firstName = "";
     private static int _nextId = 1;
     public int Id 
     { 
@@ -12,18 +16,18 @@ public class Patient
     }
     public string FirstName 
     { 
-        get; 
-        set; 
+        get => _firstName;
+        set => _firstName = value;
     }
     public string LastName 
     { 
-        get; 
-        set; 
+        get => _lastName;
+        set => _lastName = value;
     }
     public DateTime DateOfBirth 
     { 
-        get; 
-        set; 
+        get => _dateOfBirth; 
+        set => _dateOfBirth = value;
     }
     public BloodType BloodType 
     { 
@@ -32,9 +36,11 @@ public class Patient
     }
     public string Phone 
     { 
-        get; 
-        set; 
+        get => _phone; 
+        set => _phone = value;
     }
+
+    
     public string Email 
     { 
         get; 
