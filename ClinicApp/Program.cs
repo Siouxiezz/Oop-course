@@ -1,4 +1,8 @@
 using ClinicApp;
+using ClinicApp.Enums;
+using ClinicApp.Managers;
+using ClinicApp.Models;
+
 
 Patient p1 = new("Ivan", "Petrenko", new DateTime(1985, 8, 9), BloodType.APositive, "0501234567");
 Patient p2 = new("Olena", "Koval", new DateTime(1993, 9, 10), BloodType.BNegative, "0672345678");

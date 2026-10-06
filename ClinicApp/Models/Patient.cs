@@ -1,5 +1,8 @@
 using System;
-namespace ClinicApp;
+using ClinicApp.Enums;
+using ClinicApp.Utils;
+
+namespace ClinicApp.Models;
 public class Patient
 {
     private static int _nextId = 1;

@@ -1,4 +1,6 @@
-namespace ClinicApp;
+using System;
+
+namespace ClinicApp.Models;
 
 public readonly struct WorkSchedule
 {
