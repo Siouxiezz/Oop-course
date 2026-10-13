@@ -336,7 +336,7 @@ public void DisplayPatientSummary(int patientId)
 
         for (int i = 0; i < records.Length; i++)
         {
-            Console.WriteLine(records[i]);
+            Console.WriteLine($"{records[i].GetRecordType()}: {records[i].GetSummary()}");
         }
     }
 }
