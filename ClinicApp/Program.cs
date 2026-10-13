@@ -1,7 +1,13 @@
+using System.Globalization;
+using System.Text;
 using ClinicApp;
 using ClinicApp.Enums;
 using ClinicApp.Managers;
 using ClinicApp.Models;
+
+Console.OutputEncoding = Encoding.UTF8;
+CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
+CultureInfo.CurrentUICulture = CultureInfo.InvariantCulture;
 
 try
 {
@@ -113,6 +119,29 @@ try
     clinic.Appointments.Book(p1.Id, d1.Id, DateTime.Now.AddDays(1).Date.AddHours(10), 30);
     clinic.Appointments.Book(p2.Id, d2.Id, DateTime.Now.AddDays(2).Date.AddHours(11), 45);
 
+    Diagnosis diagnosis = new Diagnosis(
+        1,
+        1,
+        DateTime.Today,
+        "I10",
+        "Гіпертонічна хвороба",
+        isChronic: true);
+
+    Console.WriteLine(diagnosis.GetRecordType());
+    Console.WriteLine(diagnosis.GetSummary());
+    Console.WriteLine(diagnosis);
+    Console.WriteLine(diagnosis.IsActive());
+
+    MedicalRecord record = new Diagnosis(
+        1,
+        1,
+        DateTime.Today,
+        "J06.9",
+        "Ринофарингіт");
+
+    Console.WriteLine(record.GetRecordType());
+    Console.WriteLine(record);
+
     Console.WriteLine();
     clinic.DisplaySchedule(DateTime.Now.AddDays(1));
 
@@ -121,6 +150,28 @@ try
     {
         Console.WriteLine($"Found: {doctor.FullName} ({doctor.Speciality})");
     }
+
+    MedicalRecordManager recordManager = new();
+
+    recordManager.Add(new Diagnosis(
+        1, 1, DateTime.Today,
+        "I10", "Гіпертонічна хвороба",
+        isChronic: true));
+
+    recordManager.Add(new LabResult(
+        1, 1, DateTime.Today,
+        "Гемоглобін", 145, "г/л", "120–160",
+        isNormal: false));
+
+    recordManager.Add(new Prescription(
+        1, 1, DateTime.Today.AddDays(-5),
+        "Лізиноприл", "10 мг", 30,
+        "1 раз на добу вранці"));
+
+    recordManager.DisplayAll();
+
+    Console.WriteLine($"Курс активний: {recordManager[2]?.IsActive()}");
+    Console.WriteLine($"Закінчення курсу: {((Prescription)recordManager[2]!).ExpiresAt:dd.MM.yyyy}");
 
     Console.WriteLine("\nDoctors matching \"Neuro\":");
     foreach (Doctor doctor in clinic.Doctors.FindBySpeciality("Neuro"))
