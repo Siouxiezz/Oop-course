@@ -1,4 +1,5 @@
 using System;
+using ClinicApp.Interfaces;
 using ClinicApp.Models;
 
 namespace ClinicApp.Managers;
@@ -14,6 +15,21 @@ public class AppointmentManager
     public int Count => _count;
 
     public Appointment? this[int index] => index >= 0 && index < _count ? _appointments[index] : null;
+
+    public static int CancelAll(ICancellable[] items, string reason = "")
+    {
+        int cancelledCount = 0;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i].Cancel(reason))
+            {
+                cancelledCount++;
+            }
+        }
+
+        return cancelledCount;
+    }
 
     public AppointmentManager(PatientManager patients, DoctorManager doctors)
     {
