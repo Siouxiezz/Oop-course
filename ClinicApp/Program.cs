@@ -193,6 +193,7 @@ void AppointmentsMenu(Clinic clinic)
         Console.WriteLine("  2 — Майбутні записи");
         Console.WriteLine("  3 — Розклад на завтра");
         Console.WriteLine("  8 — Скасувати всі записи пацієнта");
+        Console.WriteLine("  9 — За типом прийому");
         Console.WriteLine("  0 — Назад");
 
         int? choice = ReadMenuChoice("Оберіть: ");
@@ -215,10 +216,47 @@ void AppointmentsMenu(Clinic clinic)
             case 8:
                 CancelPatientAppointments(clinic);
                 break;
+            case 9:
+                DisplayAppointmentsByType(clinic);
+                break;
             default:
                 Console.WriteLine("Невідомий пункт меню.");
                 break;
         }
+    }
+}
+
+void DisplayAppointmentsByType(Clinic clinic)
+{
+    Console.WriteLine("  1 — Термінові");
+    Console.WriteLine("  2 — Консультації спеціаліста");
+    Console.WriteLine("  3 — Звичайні");
+
+    int? choice = ReadMenuChoice("Оберіть: ");
+    if (choice is null or 0)
+    {
+        return;
+    }
+
+    Appointment[]? appointments = choice switch
+    {
+        1 => clinic.Appointments.GetUrgent(),
+        2 => clinic.Appointments.GetSpecialist(),
+        3 => clinic.Appointments.GetRegular(),
+        _ => null
+    };
+
+    if (appointments is null)
+    {
+        Console.WriteLine("Невідомий пункт меню.");
+    }
+    else if (appointments.Length == 0)
+    {
+        Console.WriteLine("Записів не знайдено.");
+    }
+    else
+    {
+        clinic.Appointments.DisplayList(appointments);
     }
 }
 

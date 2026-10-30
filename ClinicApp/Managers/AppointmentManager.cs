@@ -49,6 +49,84 @@ public class AppointmentManager
         return appointments;
     }
 
+    public Appointment[] GetUrgent()
+    {
+        int matches = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is UrgentAppointment)
+            {
+                matches++;
+            }
+        }
+
+        var appointments = new Appointment[matches];
+        int index = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is UrgentAppointment)
+            {
+                appointments[index++] = _appointments[i];
+            }
+        }
+
+        return appointments;
+    }
+
+    public Appointment[] GetSpecialist()
+    {
+        int matches = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is SpecialistAppointment)
+            {
+                matches++;
+            }
+        }
+
+        var appointments = new Appointment[matches];
+        int index = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is SpecialistAppointment)
+            {
+                appointments[index++] = _appointments[i];
+            }
+        }
+
+        return appointments;
+    }
+
+    public Appointment[] GetRegular()
+    {
+        int matches = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is RegularAppointment)
+            {
+                matches++;
+            }
+        }
+
+        var appointments = new Appointment[matches];
+        int index = 0;
+
+        for (int i = 0; i < _count; i++)
+        {
+            if (_appointments[i] is RegularAppointment)
+            {
+                appointments[index++] = _appointments[i];
+            }
+        }
+
+        return appointments;
+    }
+
     public bool Book(int patientId, int doctorId, DateTime scheduledAt, int durationMinutes = 30)
     {
         return TryBook(new RegularAppointment(patientId, doctorId, scheduledAt, durationMinutes));
@@ -188,9 +266,8 @@ public class AppointmentManager
 
         string patientName = patient?.FullName ?? $"Patient #{appointment.PatientId}";
         string doctorName = doctor?.FullName ?? $"Doctor #{appointment.DoctorId}";
-        string notePart = string.IsNullOrEmpty(appointment.Notes) ? string.Empty : $" | {appointment.Notes}";
 
-        Console.WriteLine($"[{appointment.Id}] {patientName} → {doctorName} | {appointment.ScheduledAt:dd.MM.yyyy HH:mm}–{appointment.EndsAt:HH:mm} | {appointment.Status}{notePart}");
+        Console.WriteLine($"[{appointment.Id}] {appointment.GetDescription()} | {patientName} → {doctorName} | {appointment.ScheduledAt:dd.MM.yyyy HH:mm}–{appointment.EndsAt:HH:mm} | {appointment.Status} | {appointment.GetCost():F2} грн");
     }
 
     public void DisplayList(Appointment[] appointments)
