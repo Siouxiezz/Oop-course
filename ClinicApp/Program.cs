@@ -33,8 +33,16 @@ clinic.Doctors.Add(doctor1);
 clinic.Doctors.Add(doctor2);
 clinic.Doctors.Add(doctor3);
 
-clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10), 30);
-clinic.Appointments.Book(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), 45);
+clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10));
+clinic.Appointments.BookUrgent(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), "невідкладний огляд");
+clinic.Appointments.BookSpecialist(patient3.Id, doctor3.Id, DateTime.Today.AddDays(3).AddHours(12), "планова консультація");
+
+UrgentAppointment urgentDemo = new(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(9), "тест");
+Appointment appointmentReference = urgentDemo;
+Console.WriteLine("== new vs override ==");
+Console.WriteLine($"Через Appointment:       {appointmentReference.GetDescription()} | пріоритет {appointmentReference.GetPriority()}");
+Console.WriteLine($"Через UrgentAppointment: {urgentDemo.GetDescription()} | пріоритет {urgentDemo.GetPriority()}");
+
 
 clinic.MedicalRecords.Add(new Diagnosis(
     patient1.Id, doctor1.Id, DateTime.Today.AddDays(-30),
@@ -185,6 +193,7 @@ void AppointmentsMenu(Clinic clinic)
         Console.WriteLine("  2 — Майбутні записи");
         Console.WriteLine("  3 — Розклад на завтра");
         Console.WriteLine("  8 — Скасувати всі записи пацієнта");
+        Console.WriteLine("  9 — За типом прийому");
         Console.WriteLine("  0 — Назад");
 
         int? choice = ReadMenuChoice("Оберіть: ");
@@ -207,10 +216,47 @@ void AppointmentsMenu(Clinic clinic)
             case 8:
                 CancelPatientAppointments(clinic);
                 break;
+            case 9:
+                DisplayAppointmentsByType(clinic);
+                break;
             default:
                 Console.WriteLine("Невідомий пункт меню.");
                 break;
         }
+    }
+}
+
+void DisplayAppointmentsByType(Clinic clinic)
+{
+    Console.WriteLine("  1 — Термінові");
+    Console.WriteLine("  2 — Консультації спеціаліста");
+    Console.WriteLine("  3 — Звичайні");
+
+    int? choice = ReadMenuChoice("Оберіть: ");
+    if (choice is null or 0)
+    {
+        return;
+    }
+
+    Appointment[]? appointments = choice switch
+    {
+        1 => clinic.Appointments.GetUrgent(),
+        2 => clinic.Appointments.GetSpecialist(),
+        3 => clinic.Appointments.GetRegular(),
+        _ => null
+    };
+
+    if (appointments is null)
+    {
+        Console.WriteLine("Невідомий пункт меню.");
+    }
+    else if (appointments.Length == 0)
+    {
+        Console.WriteLine("Записів не знайдено.");
+    }
+    else
+    {
+        clinic.Appointments.DisplayList(appointments);
     }
 }
 

@@ -28,6 +28,8 @@ public class Appointment : IPayable, ICancellable
     public bool IsPaid => _isPaid;
     public bool IsCancelled => Status == AppointmentStatus.Cancelled;
     public string CancellationReason => IsCancelled ? Notes : "";
+    // Variant A: keep the discount in the base class so every appointment type applies it before its own markup.
+    public decimal DiscountMultiplier { get; set; } = 1m;
     public DateTime EndsAt
     {
         get
@@ -54,9 +56,19 @@ public class Appointment : IPayable, ICancellable
         Id = _nextId++;
     }
 
-    public decimal GetCost()
+    public virtual decimal GetCost()
     {
-        return DurationMinutes * 10m;
+        return DurationMinutes * 10m * DiscountMultiplier;
+    }
+
+    public virtual string GetDescription()
+    {
+        return "Прийом";
+    }
+
+    public int GetPriority()
+    {
+        return 3;
     }
 
     public void MarkPaid()
@@ -93,7 +105,7 @@ public class Appointment : IPayable, ICancellable
 
     public override string ToString()
     {
-        string result = $"[{Id}] Patient #{PatientId} → Doctor #{DoctorId} | " +
+        string result = $"[{Id}] {GetDescription()} | Patient #{PatientId} → Doctor #{DoctorId} | " +
                         $"{ScheduledAt:dd.MM.yyyy HH:mm}–{EndsAt:HH:mm} | {Status}";
 
         if (Notes.Length > 0)
@@ -101,6 +113,6 @@ public class Appointment : IPayable, ICancellable
             result += $" | {Notes}";
         }
 
-        return result;
+        return $"{result} | {GetCost():F2} грн";
     }
 }
