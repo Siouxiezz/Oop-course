@@ -33,8 +33,16 @@ clinic.Doctors.Add(doctor1);
 clinic.Doctors.Add(doctor2);
 clinic.Doctors.Add(doctor3);
 
-clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10), 30);
-clinic.Appointments.Book(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), 45);
+clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10));
+clinic.Appointments.BookUrgent(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), "невідкладний огляд");
+clinic.Appointments.BookSpecialist(patient3.Id, doctor3.Id, DateTime.Today.AddDays(3).AddHours(12), "планова консультація");
+
+UrgentAppointment urgentDemo = new(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(9), "тест");
+Appointment appointmentReference = urgentDemo;
+Console.WriteLine("== new vs override ==");
+Console.WriteLine($"Через Appointment:       {appointmentReference.GetDescription()} | пріоритет {appointmentReference.GetPriority()}");
+Console.WriteLine($"Через UrgentAppointment: {urgentDemo.GetDescription()} | пріоритет {urgentDemo.GetPriority()}");
+
 
 clinic.MedicalRecords.Add(new Diagnosis(
     patient1.Id, doctor1.Id, DateTime.Today.AddDays(-30),
