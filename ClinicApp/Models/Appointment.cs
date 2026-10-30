@@ -28,6 +28,8 @@ public class Appointment : IPayable, ICancellable
     public bool IsPaid => _isPaid;
     public bool IsCancelled => Status == AppointmentStatus.Cancelled;
     public string CancellationReason => IsCancelled ? Notes : "";
+    // Variant A: keep the discount in the base class so every appointment type applies it before its own markup.
+    public decimal DiscountMultiplier { get; set; } = 1m;
     public DateTime EndsAt
     {
         get
@@ -56,7 +58,7 @@ public class Appointment : IPayable, ICancellable
 
     public virtual decimal GetCost()
     {
-        return DurationMinutes * 10m;
+        return DurationMinutes * 10m * DiscountMultiplier;
     }
 
     public virtual string GetDescription()

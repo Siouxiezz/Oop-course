@@ -127,9 +127,17 @@ public class AppointmentManager
         return appointments;
     }
 
-    public bool Book(int patientId, int doctorId, DateTime scheduledAt, int durationMinutes = 30)
+    public bool Book(
+        int patientId,
+        int doctorId,
+        DateTime scheduledAt,
+        int durationMinutes = 30,
+        decimal discountMultiplier = 1m)
     {
-        return TryBook(new RegularAppointment(patientId, doctorId, scheduledAt, durationMinutes));
+        return TryBook(new RegularAppointment(patientId, doctorId, scheduledAt, durationMinutes)
+        {
+            DiscountMultiplier = discountMultiplier
+        });
     }
 
     public bool BookUrgent(
@@ -137,9 +145,13 @@ public class AppointmentManager
         int doctorId,
         DateTime scheduledAt,
         string urgencyNote = "",
-        int durationMinutes = 30)
+        int durationMinutes = 30,
+        decimal discountMultiplier = 1m)
     {
-        return TryBook(new UrgentAppointment(patientId, doctorId, scheduledAt, urgencyNote, durationMinutes));
+        return TryBook(new UrgentAppointment(patientId, doctorId, scheduledAt, urgencyNote, durationMinutes)
+        {
+            DiscountMultiplier = discountMultiplier
+        });
     }
 
     public bool BookSpecialist(
@@ -147,9 +159,13 @@ public class AppointmentManager
         int doctorId,
         DateTime scheduledAt,
         string topic = "",
-        int durationMinutes = 45)
+        int durationMinutes = 45,
+        decimal discountMultiplier = 1m)
     {
-        return TryBook(new SpecialistAppointment(patientId, doctorId, scheduledAt, topic, durationMinutes));
+        return TryBook(new SpecialistAppointment(patientId, doctorId, scheduledAt, topic, durationMinutes)
+        {
+            DiscountMultiplier = discountMultiplier
+        });
     }
 
     private bool TryBook(Appointment appointment)
