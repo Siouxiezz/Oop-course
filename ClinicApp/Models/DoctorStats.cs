@@ -44,6 +44,6 @@ public class DoctorStats : IComparable<DoctorStats>
             ? "—"
             : LastAppointmentDate.ToString("dd.MM.yyyy");
 
-        return $"[{DoctorId}] {FullName} | Appointments: {AppointmentCount} | Revenue: {TotalRevenue:F2} грн | Last appointment: {lastAppointment}";
+        return $"[{DoctorId}] {FullName} | Прийомів: {AppointmentCount} | Виручка: {TotalRevenue:F2} грн | Останній: {lastAppointment}";
     }
 }
