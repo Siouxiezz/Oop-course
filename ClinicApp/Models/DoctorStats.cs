@@ -40,6 +40,10 @@ public class DoctorStats : IComparable<DoctorStats>
 
     public override string ToString()
     {
-        return $"[{DoctorId}] {FullName} | Appointments: {AppointmentCount} | Revenue: {TotalRevenue:F2} грн | Last appointment: {LastAppointmentDate:dd.MM.yyyy}";
+        string lastAppointment = LastAppointmentDate == DateTime.MinValue
+            ? "—"
+            : LastAppointmentDate.ToString("dd.MM.yyyy");
+
+        return $"[{DoctorId}] {FullName} | Appointments: {AppointmentCount} | Revenue: {TotalRevenue:F2} грн | Last appointment: {lastAppointment}";
     }
 }
