@@ -18,6 +18,8 @@ public class Clinic
 
     public MedicalRecordManager MedicalRecords { get; }
 
+    public WaitingQueue<Patient> WaitingRoom { get; }
+
     public Clinic(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -31,6 +33,7 @@ public class Clinic
         Appointments = new AppointmentManager(Patients, Doctors);
         Billing = new BillingManager(Appointments);
         MedicalRecords = new MedicalRecordManager();
+        WaitingRoom = new WaitingQueue<Patient>();
     }
 
     public void DisplaySchedule(DateTime date)
