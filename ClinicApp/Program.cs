@@ -83,7 +83,8 @@ void RunMainMenu(Clinic clinic)
         Console.WriteLine("  3. Записи         — прийоми, скасування     ");
         Console.WriteLine("  4. Медична картка — діагнози, рецепти       ");
         Console.WriteLine("  5. Рахунки        — оплата, борги           ");
-        Console.WriteLine("  6. Звіт           — загальна статистика     ");
+        Console.WriteLine("  6. Черга          — очікування, прийом      ");
+        Console.WriteLine("  7. Звіт           — загальна статистика     ");
         Console.WriteLine("  0. Вийти                                    ");
         Console.WriteLine("-----------------------------------------------");
 
@@ -111,7 +112,86 @@ void RunMainMenu(Clinic clinic)
                 BillingMenu(clinic);
                 break;
             case 6:
+                WaitingRoomMenu(clinic);
+                break;
+            case 7:
                 clinic.GenerateReport();
+                break;
+            default:
+                Console.WriteLine("Невідомий пункт меню.");
+                break;
+        }
+    }
+}
+
+void WaitingRoomMenu(Clinic clinic)
+{
+    while (true)
+    {
+        Console.WriteLine("\n── Черга ───────────────────────");
+        Console.WriteLine("  1. Додати пацієнта до черги");
+        Console.WriteLine("  2. Прийняти першого");
+        Console.WriteLine("  3. Хто перший?");
+        Console.WriteLine("  4. Переглянути всю чергу");
+        Console.WriteLine("  0. Назад");
+
+        int? choice = ReadMenuChoice("Оберіть: ");
+        if (choice is null or 0)
+        {
+            return;
+        }
+
+        switch (choice)
+        {
+            case 1:
+                if (TryReadInt("ID пацієнта: ", out int patientId))
+                {
+                    Patient? patient = clinic.Patients.FindById(patientId);
+                    if (patient is null)
+                    {
+                        Console.WriteLine("Пацієнта не знайдено");
+                    }
+                    else
+                    {
+                        clinic.WaitingRoom.Enqueue(patient);
+                        Console.WriteLine($"Пацієнта {patient.FullName} додано до черги.");
+                    }
+                }
+                break;
+            case 2:
+                try
+                {
+                    Patient acceptedPatient = clinic.WaitingRoom.Dequeue();
+                    Console.WriteLine($"Прийнято: {acceptedPatient.FullName}. У черзі лишилось: {clinic.WaitingRoom.Count}");
+                }
+                catch (InvalidOperationException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+                break;
+            case 3:
+                try
+                {
+                    Patient firstPatient = clinic.WaitingRoom.Peek();
+                    Console.WriteLine($"Перший у черзі: {firstPatient.FullName}");
+                }
+                catch (InvalidOperationException exception)
+                {
+                    Console.WriteLine(exception.Message);
+                }
+                break;
+            case 4:
+                Patient[] patients = clinic.WaitingRoom.ToArray();
+                if (patients.Length == 0)
+                {
+                    Console.WriteLine("Черга очікування порожня.");
+                    break;
+                }
+
+                for (int i = 0; i < patients.Length; i++)
+                {
+                    Console.WriteLine($"{i + 1}. {patients[i].FullName}");
+                }
                 break;
             default:
                 Console.WriteLine("Невідомий пункт меню.");

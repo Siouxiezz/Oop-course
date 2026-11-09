@@ -1,9 +1,10 @@
 using System;
 using ClinicApp.Enums;
+using ClinicApp.Interfaces;
 using ClinicApp.Utils;
 
 namespace ClinicApp.Models;
-public class Patient
+public class Patient : IIdentifiable
 {
     private string _phone = "";
     private DateTime _dateOfBirth;
