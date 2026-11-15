@@ -20,6 +20,8 @@ public class Clinic
 
     public MedicalRecordManager MedicalRecords { get; }
 
+    public TreatmentPlanManager TreatmentPlans { get; }
+
     public WaitingQueue<Patient> WaitingRoom { get; }
 
     public Clinic(string name)
@@ -36,6 +38,7 @@ public class Clinic
         Analytics = new AnalyticsManager(Appointments, Doctors, Patients);
         Billing = new BillingManager(Appointments);
         MedicalRecords = new MedicalRecordManager();
+        TreatmentPlans = new TreatmentPlanManager();
         WaitingRoom = new WaitingQueue<Patient>();
     }
 
