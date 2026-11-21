@@ -582,6 +582,7 @@ void FilesMenu(Clinic clinic)
         Console.WriteLine("  1. Останні рядки лога");
         Console.WriteLine("  2. Очистити лог");
         Console.WriteLine("  3. Експортувати всі звіти");
+        Console.WriteLine("  4. Імпорт пацієнтів з CSV");
         Console.WriteLine("  0. Назад");
 
         int? choice = ReadMenuChoice("Оберіть: ");
@@ -620,6 +621,13 @@ void FilesMenu(Clinic clinic)
                 {
                     Console.WriteLine(reportPaths[i]);
                 }
+                break;
+            case 4:
+                Console.Write("Шлях до CSV-файлу: ");
+                string filePath = Console.ReadLine() ?? string.Empty;
+                CsvImporter importer = new();
+                ImportResult result = importer.ImportPatients(clinic, filePath);
+                result.Print();
                 break;
             default:
                 Console.WriteLine("Невідомий пункт меню.");
