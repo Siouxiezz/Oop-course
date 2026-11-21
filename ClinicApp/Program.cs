@@ -581,6 +581,7 @@ void FilesMenu(Clinic clinic)
         Console.WriteLine("\n── Файли ─────────────────────");
         Console.WriteLine("  1. Останні рядки лога");
         Console.WriteLine("  2. Очистити лог");
+        Console.WriteLine("  3. Експортувати всі звіти");
         Console.WriteLine("  0. Назад");
 
         int? choice = ReadMenuChoice("Оберіть: ");
@@ -611,6 +612,14 @@ void FilesMenu(Clinic clinic)
             case 2:
                 clinic.Logger.Clear();
                 Console.WriteLine("Лог очищено.");
+                break;
+            case 3:
+                string[] reportPaths = clinic.Exporter.ExportAll();
+                Console.WriteLine("Створені звіти:");
+                for (int i = 0; i < reportPaths.Length; i++)
+                {
+                    Console.WriteLine(reportPaths[i]);
+                }
                 break;
             default:
                 Console.WriteLine("Невідомий пункт меню.");
