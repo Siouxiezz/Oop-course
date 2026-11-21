@@ -33,6 +33,17 @@ clinic.Logger.LogInfo($"Додано пацієнта #{patient4.Id}: {patient4.
 clinic.Patients.Add(patient5);
 clinic.Logger.LogInfo($"Додано пацієнта #{patient5.Id}: {patient5.FullName}");
 
+if (clinic.Session.Exists())
+{
+    Console.Write("Знайдено збережену сесію. Завантажити? (y/n): ");
+    string? answer = Console.ReadLine();
+    if (answer != null && answer.Trim().Equals("y", StringComparison.OrdinalIgnoreCase))
+    {
+        int loadedCount = clinic.Session.Load(clinic);
+        Console.WriteLine($"Завантажено {loadedCount} пацієнтів.");
+    }
+}
+
 Doctor doctor1 = new("Oleg", "Sidorenko", Speciality.Cardiology, "LIC-001", "0441234567", new WorkSchedule(8, 16));
 Doctor doctor2 = new("Natalia", "Moroz", Speciality.Neurology, "LIC-002", "0442345678", new WorkSchedule(9, 18));
 Doctor doctor3 = new("Andriy", "Vlasenko", Speciality.Pediatrics, "LIC-003", "0443456789", new WorkSchedule(8, 17));
@@ -116,6 +127,14 @@ void RunMainMenu(Clinic clinic)
         int? choice = ReadMenuChoice("Оберіть розділ: ");
         if (choice is null or 0)
         {
+            Console.Write("Зберегти сесію? (y/n): ");
+            string? answer = Console.ReadLine();
+            if (answer != null && answer.Trim().Equals("y", StringComparison.OrdinalIgnoreCase))
+            {
+                clinic.Session.Save(clinic);
+                Console.WriteLine("Сесію збережено.");
+            }
+
             return;
         }
 

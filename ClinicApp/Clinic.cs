@@ -29,6 +29,8 @@ public class Clinic
 
     public ClinicExporter Exporter { get; }
 
+    public SessionManager Session { get; set; }
+
     public Clinic(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -47,6 +49,7 @@ public class Clinic
         WaitingRoom = new WaitingQueue<Patient>();
         Logger = new ClinicLogger();
         Exporter = new ClinicExporter(this);
+        Session = new SessionManager();
     }
 
     public void DisplaySchedule(DateTime date)
