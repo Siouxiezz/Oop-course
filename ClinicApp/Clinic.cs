@@ -1,6 +1,7 @@
 using System;
 using ClinicApp.Managers;
 using ClinicApp.Models;
+using ClinicApp.Utils;
 
 namespace ClinicApp;
 
@@ -24,6 +25,8 @@ public class Clinic
 
     public WaitingQueue<Patient> WaitingRoom { get; }
 
+    public ClinicLogger Logger { get; }
+
     public Clinic(string name)
     {
         if (string.IsNullOrWhiteSpace(name))
@@ -40,6 +43,7 @@ public class Clinic
         MedicalRecords = new MedicalRecordManager();
         TreatmentPlans = new TreatmentPlanManager();
         WaitingRoom = new WaitingQueue<Patient>();
+        Logger = new ClinicLogger();
     }
 
     public void DisplaySchedule(DateTime date)
