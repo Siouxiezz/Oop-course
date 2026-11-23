@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using ClinicApp.Enums;
+using ClinicApp.Events;
 using ClinicApp.Models;
 
 namespace ClinicApp.Managers;
@@ -13,6 +14,8 @@ public class PatientManager
 
     public Patient? this[int index] => index >= 0 && index < _patients.Count ? _patients[index] : null;
 
+    public event EventHandler<PatientEventArgs>? PatientAdded;
+
     public void Add(Patient patient)
     {
         if (patient is null)
@@ -21,6 +24,7 @@ public class PatientManager
         }
 
         _patients.Add(patient);
+        PatientAdded?.Invoke(this, new PatientEventArgs(patient.Id, patient.FullName));
         Console.WriteLine($"Patient [{patient.Id}] {patient.FullName} added.");
     }
 

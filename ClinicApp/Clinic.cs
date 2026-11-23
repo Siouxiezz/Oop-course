@@ -1,4 +1,5 @@
 using System;
+using ClinicApp.Events;
 using ClinicApp.Managers;
 using ClinicApp.Models;
 using ClinicApp.Utils;
@@ -29,6 +30,10 @@ public class Clinic
 
     public ClinicExporter Exporter { get; }
 
+    public PatientPassportWriter Passport { get; }
+
+    public SessionEventTracker Tracker { get; }
+
     public SessionManager Session { get; set; }
 
     public Clinic(string name)
@@ -49,7 +54,31 @@ public class Clinic
         WaitingRoom = new WaitingQueue<Patient>();
         Logger = new ClinicLogger();
         Exporter = new ClinicExporter(this);
+        Passport = new PatientPassportWriter(this);
+        Tracker = new SessionEventTracker(this);
         Session = new SessionManager();
+        SubscribeEvents();
+    }
+
+    private void SubscribeEvents()
+    {
+        Appointments.AppointmentBooked += Logger.OnAppointmentBooked;
+        Appointments.AppointmentCancelled += Logger.OnAppointmentCancelled;
+        Appointments.AppointmentCompleted += Logger.OnAppointmentCompleted;
+        Appointments.UrgentAppointmentBooked += Logger.OnUrgentAppointmentBooked;
+        Patients.PatientAdded += Logger.OnPatientAdded;
+        Patients.PatientAdded += Passport.OnPatientAdded;
+        Appointments.AppointmentCompleted += Passport.OnAppointmentCompleted;
+        Billing.PaymentReceived += Logger.OnPaymentReceived;
+        TreatmentPlans.PlanCompleted += Logger.OnPlanCompleted;
+        TreatmentPlans.PlanCompleted += Passport.OnPlanCompleted;
+        Patients.PatientAdded += Tracker.OnPatientAdded;
+        Appointments.AppointmentBooked += Tracker.OnAppointmentBooked;
+        Appointments.UrgentAppointmentBooked += Tracker.OnUrgentAppointmentBooked;
+        Appointments.AppointmentCancelled += Tracker.OnAppointmentCancelled;
+        Appointments.AppointmentCompleted += Tracker.OnAppointmentCompleted;
+        Billing.PaymentReceived += Tracker.OnPaymentReceived;
+        TreatmentPlans.PlanCompleted += Tracker.OnPlanCompleted;
     }
 
     public void DisplaySchedule(DateTime date)
