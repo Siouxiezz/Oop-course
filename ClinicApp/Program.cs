@@ -115,6 +115,9 @@ void RunMainMenu(Clinic clinic)
         int? choice = ReadMenuChoice("Оберіть розділ: ");
         if (choice is null or 0)
         {
+            clinic.Tracker.PrintSummary();
+            clinic.Tracker.SaveSummary();
+
             Console.Write("Зберегти сесію? (y/n): ");
             string? answer = Console.ReadLine();
             if (answer != null && answer.Trim().Equals("y", StringComparison.OrdinalIgnoreCase))
