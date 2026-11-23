@@ -25,15 +25,10 @@ Patient patient4 = new("Olena", "Koval", new DateTime(2010, 9, 10), BloodType.Un
 Patient patient5 = new("Maria", "Tkach", new DateTime(2000, 7, 17), BloodType.Unknown, "0000000000");
 
 clinic.Patients.Add(patient1);
-clinic.Logger.LogInfo($"Додано пацієнта #{patient1.Id}: {patient1.FullName}");
 clinic.Patients.Add(patient2);
-clinic.Logger.LogInfo($"Додано пацієнта #{patient2.Id}: {patient2.FullName}");
 clinic.Patients.Add(patient3);
-clinic.Logger.LogInfo($"Додано пацієнта #{patient3.Id}: {patient3.FullName}");
 clinic.Patients.Add(patient4);
-clinic.Logger.LogInfo($"Додано пацієнта #{patient4.Id}: {patient4.FullName}");
 clinic.Patients.Add(patient5);
-clinic.Logger.LogInfo($"Додано пацієнта #{patient5.Id}: {patient5.FullName}");
 
 if (clinic.Session.Exists())
 {
@@ -57,20 +52,11 @@ clinic.Logger.LogInfo($"Додано лікаря #{doctor2.Id}: {doctor2.FullNa
 clinic.Doctors.Add(doctor3);
 clinic.Logger.LogInfo($"Додано лікаря #{doctor3.Id}: {doctor3.FullName}");
 
-if (clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10)))
-{
-    clinic.Logger.LogInfo($"Створено запис пацієнта #{patient1.Id} до лікаря #{doctor1.Id}");
-}
+clinic.Appointments.Book(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(10));
 
-if (clinic.Appointments.BookUrgent(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), "невідкладний огляд"))
-{
-    clinic.Logger.LogInfo($"Створено терміновий запис пацієнта #{patient2.Id} до лікаря #{doctor2.Id}");
-}
+clinic.Appointments.BookUrgent(patient2.Id, doctor2.Id, DateTime.Today.AddDays(2).AddHours(11), "невідкладний огляд");
 
-if (clinic.Appointments.BookSpecialist(patient3.Id, doctor3.Id, DateTime.Today.AddDays(3).AddHours(12), "планова консультація"))
-{
-    clinic.Logger.LogInfo($"Створено запис на консультацію пацієнта #{patient3.Id} до лікаря #{doctor3.Id}");
-}
+clinic.Appointments.BookSpecialist(patient3.Id, doctor3.Id, DateTime.Today.AddDays(3).AddHours(12), "планова консультація");
 
 UrgentAppointment urgentDemo = new(patient1.Id, doctor1.Id, DateTime.Today.AddDays(1).AddHours(9), "тест");
 Appointment appointmentReference = urgentDemo;
@@ -275,7 +261,7 @@ void ChangeTreatmentPlanStatus(Clinic clinic, int operation)
             changed = plan.Activate();
             break;
         case 2:
-            changed = plan.Complete();
+            changed = clinic.TreatmentPlans.Complete(planId);
             break;
         case 3:
             changed = plan.Cancel();
@@ -585,11 +571,7 @@ void CompleteAppointment(Clinic clinic)
         return;
     }
 
-    if (clinic.Appointments.Complete(appointmentId))
-    {
-        clinic.Logger.LogInfo($"Запис #{appointmentId} завершено");
-    }
-    else
+    if (!clinic.Appointments.Complete(appointmentId))
     {
         Console.WriteLine("Не вдалося завершити запис.");
     }
@@ -727,7 +709,6 @@ void BillingMenu(Clinic clinic)
                 {
                     if (clinic.Billing.PayAppointment(appointmentId))
                     {
-                        clinic.Logger.LogInfo($"Запис #{appointmentId} оплачено");
                         Console.WriteLine($"Запис [{appointmentId}] оплачено.");
                     }
                     else
@@ -756,11 +737,7 @@ void CancelPatientAppointments(Clinic clinic)
     Console.Write("Причина (Enter — без причини): ");
     string reason = Console.ReadLine() ?? string.Empty;
     var appointments = clinic.Appointments.GetByPatient(patientId);
-    int cancelledCount = AppointmentManager.CancelAll(appointments, reason);
-    if (cancelledCount > 0)
-    {
-        clinic.Logger.LogInfo($"Скасовано {cancelledCount} записів пацієнта #{patientId}: {reason}");
-    }
+    int cancelledCount = clinic.Appointments.CancelAll(appointments, reason);
 
     Console.WriteLine($"Скасовано записів: {cancelledCount}");
 }

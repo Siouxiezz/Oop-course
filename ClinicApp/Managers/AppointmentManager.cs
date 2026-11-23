@@ -16,6 +16,9 @@ public class AppointmentManager
     public int Count => _count;
 
     public event EventHandler<AppointmentEventArgs>? AppointmentBooked;
+    public event EventHandler<AppointmentEventArgs>? AppointmentCancelled;
+    public event EventHandler<AppointmentEventArgs>? AppointmentCompleted;
+    public event EventHandler<AppointmentEventArgs>? UrgentAppointmentBooked;
 
     public Appointment? this[int index] => index >= 0 && index < _count ? _appointments[index] : null;
 
@@ -28,6 +31,30 @@ public class AppointmentManager
             if (items[i].Cancel(reason))
             {
                 cancelledCount++;
+            }
+        }
+
+        return cancelledCount;
+    }
+
+    public int CancelAll(Appointment[] items, string reason = "")
+    {
+        int cancelledCount = 0;
+
+        for (int i = 0; i < items.Length; i++)
+        {
+            if (items[i].Cancel(reason))
+            {
+                cancelledCount++;
+                if (items[i] is Appointment appointment)
+                {
+                    AppointmentCancelled?.Invoke(this, new AppointmentEventArgs(
+                        appointment.Id,
+                        appointment.PatientId,
+                        appointment.DoctorId,
+                        appointment.ScheduledAt,
+                        appointment.Notes));
+                }
             }
         }
 
@@ -196,12 +223,26 @@ public class AppointmentManager
         _appointments[_count] = appointment;
         _count++;
 
+        string eventNotes = appointment is UrgentAppointment urgent
+            ? urgent.UrgencyNote
+            : appointment.Notes;
+
         AppointmentBooked?.Invoke(this, new AppointmentEventArgs(
             appointment.Id,
             appointment.PatientId,
             appointment.DoctorId,
             appointment.ScheduledAt,
-            appointment.Notes));
+            eventNotes));
+
+        if (appointment is UrgentAppointment)
+        {
+            UrgentAppointmentBooked?.Invoke(this, new AppointmentEventArgs(
+                appointment.Id,
+                appointment.PatientId,
+                appointment.DoctorId,
+                appointment.ScheduledAt,
+                eventNotes));
+        }
 
         Console.WriteLine($"Appointment [{appointment.Id}] created: {patient.FullName} → {doctor.FullName} at {appointment.ScheduledAt:dd.MM.yyyy HH:mm}");
         return true;
@@ -231,6 +272,12 @@ public class AppointmentManager
         bool result = appointment.Cancel(reason);
         if (result)
         {
+            AppointmentCancelled?.Invoke(this, new AppointmentEventArgs(
+                appointment.Id,
+                appointment.PatientId,
+                appointment.DoctorId,
+                appointment.ScheduledAt,
+                appointment.Notes));
             Console.WriteLine($"Appointment [{appointment.Id}] cancelled.");
         }
 
@@ -248,6 +295,12 @@ public class AppointmentManager
         bool result = appointment.Complete();
         if (result)
         {
+            AppointmentCompleted?.Invoke(this, new AppointmentEventArgs(
+                appointment.Id,
+                appointment.PatientId,
+                appointment.DoctorId,
+                appointment.ScheduledAt,
+                appointment.Notes));
             Console.WriteLine($"Appointment [{appointment.Id}] completed.");
         }
 
