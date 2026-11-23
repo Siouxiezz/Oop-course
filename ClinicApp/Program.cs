@@ -5,6 +5,7 @@ using System.Threading;
 using ClinicApp;
 using ClinicApp.Comparators;
 using ClinicApp.Enums;
+using ClinicApp.Events;
 using ClinicApp.Interfaces;
 using ClinicApp.Managers;
 using ClinicApp.Models;
@@ -15,6 +16,7 @@ Thread.CurrentThread.CurrentUICulture = CultureInfo.InvariantCulture;
 Console.OutputEncoding = Encoding.UTF8;
 
 Clinic clinic = new("Medical Clinic");
+clinic.Appointments.AppointmentBooked += OnAppointmentBookedConsole;
 
 Patient patient1 = new("Ivan", "Petrenko", new DateTime(1985, 8, 9), BloodType.APositive, "0501234567");
 Patient patient2 = new("Olena", "Koval", new DateTime(1993, 9, 10), BloodType.BNegative, "0672345678");
@@ -1128,4 +1130,10 @@ string ReadText(string prompt)
 {
     Console.Write(prompt);
     return Console.ReadLine() ?? string.Empty;
+}
+
+static void OnAppointmentBookedConsole(object? sender, AppointmentEventArgs e)
+{
+    Console.WriteLine(
+        $"[EVENT] Запис #{e.AppointmentId} створено: пацієнт #{e.PatientId} → лікар #{e.DoctorId}, {e.ScheduledAt:dd.MM.yyyy HH:mm}");
 }
