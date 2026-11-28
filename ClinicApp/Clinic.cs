@@ -18,6 +18,8 @@ public class Clinic
 
     public AnalyticsManager Analytics { get; }
 
+    public ReportManager Reports { get; }
+
     public BillingManager Billing { get; }
 
     public MedicalRecordManager MedicalRecords { get; }
@@ -48,6 +50,7 @@ public class Clinic
         Doctors = new DoctorManager();
         Appointments = new AppointmentManager(Patients, Doctors);
         Analytics = new AnalyticsManager(Appointments, Doctors, Patients);
+        Reports = new ReportManager(Appointments, Doctors, Patients);
         Billing = new BillingManager(Appointments);
         MedicalRecords = new MedicalRecordManager();
         TreatmentPlans = new TreatmentPlanManager();
