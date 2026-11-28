@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using ClinicApp.Models;
 
 namespace ClinicApp.Managers;
@@ -25,36 +26,23 @@ public class AnalyticsManager
         Doctor[] doctors = _doctors.GetAll();
         Appointment[] appointments = _appointments.GetAll();
 
-        for (int i = 0; i < doctors.Length; i++)
+        return doctors.Select(doctor =>
         {
-            Doctor doctor = doctors[i];
-            int appointmentCount = 0;
-            decimal totalRevenue = 0;
-            DateTime lastAppointmentDate = DateTime.MinValue;
+            IEnumerable<Appointment> doctorAppointments = appointments
+                .Where(appointment => appointment.DoctorId == doctor.Id);
+            int appointmentCount = doctorAppointments.Count();
+            decimal totalRevenue = doctorAppointments.Sum(appointment => appointment.GetCost());
+            DateTime lastAppointmentDate = doctorAppointments.Any()
+                ? doctorAppointments.Max(appointment => appointment.ScheduledAt)
+                : DateTime.MinValue;
 
-            for (int j = 0; j < appointments.Length; j++)
-            {
-                Appointment appointment = appointments[j];
-                if (appointment.DoctorId != doctor.Id)
-                {
-                    continue;
-                }
-
-                appointmentCount++;
-                totalRevenue += appointment.GetCost();
-                if (appointment.ScheduledAt > lastAppointmentDate)
-                {
-                    lastAppointmentDate = appointment.ScheduledAt;
-                }
-            }
-
-            yield return new DoctorStats(
+            return new DoctorStats(
                 doctor.Id,
                 doctor.FullName,
                 appointmentCount,
                 totalRevenue,
                 lastAppointmentDate);
-        }
+        });
     }
 
     public IEnumerable<PatientStats> ComputePatientStats()
@@ -62,35 +50,22 @@ public class AnalyticsManager
         Patient[] patients = _patients.GetAll();
         Appointment[] appointments = _appointments.GetAll();
 
-        for (int i = 0; i < patients.Length; i++)
+        return patients.Select(patient =>
         {
-            Patient patient = patients[i];
-            int visitCount = 0;
-            decimal totalSpent = 0;
-            DateTime lastVisitDate = DateTime.MinValue;
+            IEnumerable<Appointment> patientAppointments = appointments
+                .Where(appointment => appointment.PatientId == patient.Id);
+            int visitCount = patientAppointments.Count();
+            decimal totalSpent = patientAppointments.Sum(appointment => appointment.GetCost());
+            DateTime lastVisitDate = patientAppointments.Any()
+                ? patientAppointments.Max(appointment => appointment.ScheduledAt)
+                : DateTime.MinValue;
 
-            for (int j = 0; j < appointments.Length; j++)
-            {
-                Appointment appointment = appointments[j];
-                if (appointment.PatientId != patient.Id)
-                {
-                    continue;
-                }
-
-                visitCount++;
-                totalSpent += appointment.GetCost();
-                if (appointment.ScheduledAt > lastVisitDate)
-                {
-                    lastVisitDate = appointment.ScheduledAt;
-                }
-            }
-
-            yield return new PatientStats(
+            return new PatientStats(
                 patient.Id,
                 patient.FullName,
                 visitCount,
                 totalSpent,
                 lastVisitDate);
-        }
+        });
     }
 }
